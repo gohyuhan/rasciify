@@ -7,20 +7,20 @@ use std::{
 };
 
 use image::{DynamicImage, GenericImageView};
-
-const ASCII_CHARS: &[char] = &[' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
+use crate::symbols::Symbols;
 
 /// Converts an image to ASCII art.
 pub fn image_to_text(
     path: &str,
     num_cols: u32,
+    complex:bool,
     output_directory: Option<&str>,
     filename: Option<&str>,
 ) -> Result<String, String> {
     let img = image::open(path).expect("Failed to open image");
     let gray_img = img.grayscale();
 
-    let ascii = grayscale_to_ascii(&gray_img, num_cols);
+    let ascii = grayscale_to_ascii(&gray_img, num_cols, complex);
 
     if output_directory.is_some() {
         let path = Path::new(output_directory.unwrap());
@@ -48,13 +48,14 @@ pub fn image_to_text(
     return Ok(ascii);
 }
 
-fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32) -> String {
+fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex:bool) -> String {
     let (width, height) = img.dimensions();
     let mut ascii = String::new();
     let mut num_cols = num_cols;
     let mut cell_width = width / num_cols;
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
+    let symbol_array:Vec<char> = if complex {Symbols::Complex.get_symbol_array()} else {Symbols::Simple.get_symbol_array()} ;
 
     if num_cols > width || num_rows > height {
         // Too many columns or rows. Use default setting
@@ -73,10 +74,9 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32) -> String {
             let normalized_luma = luma as f32 / 255.0;
 
             // Calculate the index into the ASCII character set.
-            // Improved index calculation: scale and round.
-            let index = (normalized_luma * (ASCII_CHARS.len() - 1) as f32).round() as usize;
+            let index = (normalized_luma * (symbol_array.len() - 1) as f32).round() as usize;
 
-            ascii.push(ASCII_CHARS[index]);
+            ascii.push(symbol_array[index]);
         }
         ascii.push('\n'); // Newline after each row
     }
