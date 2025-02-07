@@ -7,7 +7,7 @@ use std::{
 };
 
 use image::{DynamicImage, GenericImageView};
-use crate::symbols::Symbols;
+use crate::character::CharacterType;
 
 /// Converts an image to ASCII art.
 pub fn image_to_text(
@@ -55,7 +55,7 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex:bool) -> String
     let mut cell_width = width / num_cols;
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
-    let symbol_array:Vec<char> = if complex {Symbols::Complex.get_symbol_array()} else {Symbols::Simple.get_symbol_array()} ;
+    let character_array:Vec<char> = if complex {CharacterType::Complex.get_character_array()} else {CharacterType::Simple.get_character_array()} ;
 
     if num_cols > width || num_rows > height {
         // Too many columns or rows. Use default setting
@@ -74,9 +74,9 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex:bool) -> String
             let normalized_luma = luma as f32 / 255.0;
 
             // Calculate the index into the ASCII character set.
-            let index = (normalized_luma * (symbol_array.len() - 1) as f32).round() as usize;
+            let index = (normalized_luma * (character_array.len() - 1) as f32).round() as usize;
 
-            ascii.push(symbol_array[index]);
+            ascii.push(character_array[index]);
         }
         ascii.push('\n'); // Newline after each row
     }
