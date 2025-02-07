@@ -53,12 +53,12 @@ pub fn image_to_image(
 fn grayscale_to_ascii_img(img: &DynamicImage, num_cols: u32, character_type:CharacterType) -> String {
     let (width, height) = img.dimensions();
     let character_data:FontData = get_fonts(character_type).unwrap();
-    println!("OG dimension width: {}, height: {}", width, height);
     let mut num_cols = num_cols;
+    // width per cell
     let mut cell_width = width / num_cols;
+    // height per cell
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
-    println!("cell width: {} cell height:{}", cell_width, cell_height);
 
     if num_cols > width || num_rows > height {
         // Too many columns or rows. Use default setting
@@ -68,20 +68,20 @@ fn grayscale_to_ascii_img(img: &DynamicImage, num_cols: u32, character_type:Char
         num_rows = height / cell_height;
     }
 
-    let (char_width , char_height) = get_character_dimensions(&character_data.font, character_data.scale, character_data.character);
-    println!("char width: {} char height:{}", char_width, char_height);
-    let output_image_width =  character_data.size * char_width * num_cols;
-    let output_image_height = character_data.size * char_height * num_rows;
-    println!("num cols: {} num rows: {}", num_cols, num_rows);
-    println!("{}x{}", output_image_width, output_image_height);
+    // Calculate the size of the output image based on the number of columns and rows need and the size of the font
+    let (char_width , char_height) = get_character_dimensions(character_data.scale, character_data.character, character_data.font_data, );
+    let output_image_width = char_width * num_cols;
+    let output_image_height = char_height * num_rows;
 
-
+    // create a blank image to draw the ASCII art on
     let mut out_image: ImageBuffer<Luma<u8>, Vec<u8>> = ImageBuffer::new(output_image_width, output_image_height);
 
     // Fill the background with the specified color
     for pixel in out_image.pixels_mut() {
-        *pixel = Luma([255]);
+        *pixel = Luma([0]);
     }
+
+    // Get the character based on the grayscale value and form a row of characters and draw it on the image row by row
     for i in 0..num_rows {
         let mut text_line = "".to_string();
         for j in 0..num_cols{
@@ -95,7 +95,7 @@ fn grayscale_to_ascii_img(img: &DynamicImage, num_cols: u32, character_type:Char
             let index = (normalized_luma * (character_data.character_list.len() - 1) as f32).round() as usize;
             text_line = format!("{}{}", text_line, character_data.character_list[index]);
         }
-        draw_text_mut(&mut out_image, Luma([0]), 0, (i * char_height * character_data.size) as i32, character_data.scale, &character_data.font , text_line.as_str());
+        draw_text_mut(&mut out_image, Luma([255]), 0, (i * char_height) as i32, character_data.scale, &character_data.font , text_line.as_str());
     }
 
     out_image.save("ascii_text.jpg").unwrap();
