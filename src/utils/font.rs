@@ -58,19 +58,23 @@ pub fn get_fonts<'a>(character: CharacterType) -> Result<FontData<'a>, String> {
         font,
         font_data,
         scale: 20.0,
-        character:'A'
+        character: 'A',
     };
     return Ok(font_data_struct);
 }
 
-pub fn get_character_dimensions(scale: f32, character: char, font_data: &'static [u8]) -> (u32, u32) {
+pub fn get_character_dimensions(
+    scale: f32,
+    character: char,
+    font_data: &'static [u8],
+) -> (u32, u32) {
     // For future me:
     // this function is somehow similiar to ImageFont.getbbox in PIL (pillow python)
     //
     // char_bbox = font.getbbox(sample_character)
     // char_width = char_bbox[2] - char_bbox[0]
     // char_height = char_bbox[3]
-    // 
+    //
     //
     use rusttype::Font as rFont;
     let rtfont: rFont<'static> = rFont::try_from_bytes(font_data).expect("Error constructing Font");
@@ -83,5 +87,8 @@ pub fn get_character_dimensions(scale: f32, character: char, font_data: &'static
     // Get the vertical height (ascender a descent), which should be the same for all characters
     let v_metrics = rtfont.v_metrics(Scale::uniform(scale));
 
-    return (char_width, (v_metrics.ascent - v_metrics.descent).round() as u32);
+    return (
+        char_width,
+        (v_metrics.ascent - v_metrics.descent).round() as u32,
+    );
 }

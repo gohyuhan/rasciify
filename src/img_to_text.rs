@@ -1,19 +1,20 @@
 use std::{
-    fs::{
-        write,
-        create_dir_all
-    },
+    fmt::format,
+    fs::{create_dir_all, write},
     path::Path,
 };
 
+use crate::{
+    character::CharacterType,
+    utils::utils::{convert_grayscale_img_to_ndarray, get_character_line_list_based_on_luma},
+};
 use image::{DynamicImage, GenericImageView};
-use crate::character::CharacterType;
 
 /// Converts an image to ASCII art.
 pub fn image_to_text(
     path: &str,
     num_cols: u32,
-    complex:bool,
+    complex: bool,
     output_directory: Option<&str>,
     filename: Option<&str>,
 ) -> Result<String, String> {
@@ -38,8 +39,8 @@ pub fn image_to_text(
     }
 
     if filename.is_some() {
-        let mut path:String = format!("{}.txt", filename.unwrap());
-        if output_directory.is_some(){
+        let mut path: String = format!("{}.txt", filename.unwrap());
+        if output_directory.is_some() {
             path = format!("{}{}", output_directory.unwrap(), filename.unwrap());
         }
         let _ = write(path, ascii.clone());
@@ -48,14 +49,18 @@ pub fn image_to_text(
     return Ok(ascii);
 }
 
-fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex:bool) -> String {
+fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> String {
     let (width, height) = img.dimensions();
     let mut ascii = String::new();
     let mut num_cols = num_cols;
     let mut cell_width = width / num_cols;
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
-    let character_array:Vec<char> = if complex {CharacterType::Complex.get_character_array()} else {CharacterType::Simple.get_character_array()} ;
+    let character_array: Vec<char> = if complex {
+        CharacterType::Complex.get_character_array()
+    } else {
+        CharacterType::Simple.get_character_array()
+    };
 
     if num_cols > width || num_rows > height {
         // Too many columns or rows. Use default setting
@@ -65,20 +70,20 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex:bool) -> String
         num_rows = height / cell_height;
     }
 
+    // Convert img to grayscale ndarray
+    let img_array = convert_grayscale_img_to_ndarray(&img);
+
     for x in 0..num_rows {
-        for y in 0..num_cols {
-            let pixel = img.get_pixel((y * cell_width).min(width), (x * cell_height).min(height));
-            let luma = pixel[0]; // Get the grayscale value (0-255)
+        let img_row = img_array.row((x * cell_height) as usize);
+        let character_line_list = get_character_line_list_based_on_luma(
+            character_array.clone(),
+            img_row,
+            cell_width as usize,
+        );
+        let text_line = character_line_list.join("");
 
-            // Normalize the grayscale value to the range [0, 1]
-            let normalized_luma = luma as f32 / 255.0;
-
-            // Calculate the index into the ASCII character set.
-            let index = (normalized_luma * (character_array.len() - 1) as f32).round() as usize;
-
-            ascii.push(character_array[index]);
-        }
-        ascii.push('\n'); // Newline after each row
+        ascii.push_str(&text_line);
+        ascii.push_str("\n"); // Newline after each row
     }
 
     return ascii;
