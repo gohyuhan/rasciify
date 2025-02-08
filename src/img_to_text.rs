@@ -1,5 +1,4 @@
 use std::{
-    fmt::format,
     fs::{create_dir_all, write},
     path::Path,
 };
