@@ -1,11 +1,10 @@
-use std::{
-    fs::{create_dir_all, write},
-    path::Path,
-};
+use std::
+    fs::write
+;
 
 use crate::{
     character::CharacterType,
-    utils::utils::{convert_grayscale_img_to_ndarray, get_character_line_list_based_on_luma},
+    utils::utils::{check_and_create_directory, get_character_line_list_based_on_luma},
 };
 use image::{DynamicImage, GenericImageView};
 
@@ -22,30 +21,19 @@ pub fn image_to_text(
 
     let ascii = grayscale_to_ascii(&gray_img, num_cols, complex);
 
-    if output_directory.is_some() {
-        let path = Path::new(output_directory.unwrap());
-
-        if path.exists() {
-            if !path.is_dir() {
-                return Err(format!(
-                    "Path exists but is not a directory: {}",
-                    output_directory.unwrap()
-                ));
+    match check_and_create_directory(output_directory) {
+        Ok(_) => {
+            if let Some(filename) = filename {
+                let mut path: String = format!("{}.txt", filename);
+                if output_directory.is_some() {
+                    path = format!("{}{}", output_directory.unwrap(), filename);
+                }
+                let _ = write(path, ascii.clone());
             }
-        } else {
-            let _ = create_dir_all(path);
-        }
+            return Ok(ascii);
+        },
+        Err(e) => Err(e),
     }
-
-    if filename.is_some() {
-        let mut path: String = format!("{}.txt", filename.unwrap());
-        if output_directory.is_some() {
-            path = format!("{}{}", output_directory.unwrap(), filename.unwrap());
-        }
-        let _ = write(path, ascii.clone());
-    }
-
-    return Ok(ascii);
 }
 
 fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> String {
@@ -69,17 +57,18 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> Strin
         num_rows = height / cell_height;
     }
 
-    // Convert img to grayscale ndarray
-    let img_array = convert_grayscale_img_to_ndarray(&img);
-
     for x in 0..num_rows {
-        let img_row = img_array.row((x * cell_height) as usize);
         let character_line_list = get_character_line_list_based_on_luma(
             character_array.clone(),
-            img_row,
-            cell_width as usize,
+            &img,
+            num_cols,
+            cell_width,
+            width,
+            cell_height,
+            height,
+            x
         );
-        let text_line = character_line_list.join("");
+        let text_line: String = character_line_list.into_iter().collect();
 
         ascii.push_str(&text_line);
         ascii.push_str("\n"); // Newline after each row

@@ -1,32 +1,45 @@
+use std::{fs::create_dir_all, path::Path};
+
 use image::{DynamicImage, GenericImageView};
-use ndarray::{Array2, ArrayView1};
 
-pub fn convert_grayscale_img_to_ndarray(image: &DynamicImage) -> Array2<u8> {
-    let (width, height) = image.dimensions();
-    let pixels_grayscale_luma_array = image.pixels().map(|p| p.2[0]).collect();
+pub fn check_and_create_directory(output_directory: Option<&str>) -> Result<(), String> {
+    if output_directory.is_some() {
+        let path = Path::new(output_directory.unwrap());
 
-    let img_array = Array2::from_shape_vec(
-        (height as usize, width as usize),
-        pixels_grayscale_luma_array,
-    )
-    .unwrap();
-
-    return img_array;
+        if path.exists() {
+            if !path.is_dir() {
+                return Err(format!(
+                    "Path exists but is not a directory: {}",
+                    output_directory.unwrap()
+                ));
+            }
+        } else {
+            let _ = create_dir_all(path);
+        }
+    }
+    return Ok(());
 }
 
 pub fn get_character_line_list_based_on_luma(
     character_list: Vec<char>,
-    luma_list: ArrayView1<u8>,
-    step: usize,
-) -> Vec<String> {
-    let character_line_list: Vec<String> = luma_list
-        .iter()
-        .step_by(step)
-        .map(|&luma| {
-            let index = (luma as f32 / 255.0 * (character_list.len() - 1) as f32).round() as usize;
-            String::from(character_list[index])
-        })
-        .collect();
+    img: &DynamicImage,
+    num_cols: u32,
+    cell_width: u32,
+    width: u32,
+    cell_height: u32,
+    height: u32,
+    current_row: u32,
+) -> Vec<char> {
+    let index_scale_factor = (character_list.len() - 1) as f32 / 255.0;
+    let mut character_line_list: Vec<char> = Vec::with_capacity(num_cols as usize);
+
+    for i in 0..num_cols{
+        let pixel = img.get_pixel((i * cell_width).min(width), (current_row * cell_height).min(height));
+        let luma = pixel[0]; // Get the grayscale value (0-255)
+        // Calculate the index into the ASCII character set.
+        let index = (luma as f32 * index_scale_factor).round() as usize;
+        character_line_list.push(character_list[index]);
+    }
 
     return character_line_list;
 }
