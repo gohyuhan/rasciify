@@ -1,6 +1,4 @@
-use std::
-    fs::write
-;
+use std::fs::write;
 
 use crate::{
     character::CharacterType,
@@ -31,7 +29,7 @@ pub fn image_to_text(
                 let _ = write(path, ascii.clone());
             }
             return Ok(ascii);
-        },
+        }
         Err(e) => Err(e),
     }
 }
@@ -66,7 +64,7 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> Strin
             width,
             cell_height,
             height,
-            x
+            x,
         );
         let text_line: String = character_line_list.into_iter().collect();
 

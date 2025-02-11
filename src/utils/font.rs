@@ -20,7 +20,7 @@ pub fn get_fonts<'a>(character: CharacterType) -> Result<FontData<'a>, String> {
             font,
             font_data,
             scale: 20.0,
-            character:'A'
+            character: 'A',
         };
 
         return Ok(font_data_struct);
@@ -32,7 +32,7 @@ pub fn get_fonts<'a>(character: CharacterType) -> Result<FontData<'a>, String> {
             font,
             font_data,
             scale: 20.0,
-            character:'.'
+            character: '.',
         };
 
         return Ok(font_data_struct);
@@ -44,7 +44,7 @@ pub fn get_fonts<'a>(character: CharacterType) -> Result<FontData<'a>, String> {
             font,
             font_data,
             scale: 20.0,
-            character:'A'
+            character: 'A',
         };
 
         return Ok(font_data_struct);
