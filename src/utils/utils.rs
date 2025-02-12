@@ -80,23 +80,21 @@ pub fn get_character_and_rgb_based_on_rgb(
     return (character_list[index], pixel_rgb);
 }
 
-// this was used to sort the character from less dense to more dense
-// dense in here means the pixel that was taken up by a character,
-// example "@" is more dense than ":"
-#[derive(Debug)]
-struct CharacterDensity {
+// this was used to sort the character based on its brightness
+#[derive(Debug, Clone)]
+struct CharacterBrightness {
     pub character: char,
-    pub density: u32,
+    pub brightness: f32,
 }
 
-pub fn sort_character_density(
+pub fn sort_character_brightness(
     character_list: Vec<char>,
     font_data: &'static [u8],
     scale: f32,
 ) -> Vec<char> {
-    let mut character_density_list: Vec<CharacterDensity> = vec![];
+    let num_char = character_list.len();
+    let mut character_brightness_list: Vec<CharacterBrightness> = vec![];
     for character in character_list.clone() {
-        let mut density = 0;
         let font = FontRef::try_from_slice(font_data).unwrap();
 
         let (width, height) = get_character_dimensions(scale, character, font_data);
@@ -111,19 +109,25 @@ pub fn sort_character_density(
             &font,
             &character.to_string(),
         );
-        for pixel in img.pixels() {
-            if pixel.0[0] != 0 {
-                density += 1;
-            }
-        }
-        character_density_list.push(CharacterDensity { character, density });
+        let brightness = (img.pixels().map(|x| x[0] as f32).sum::<f32>()) / (img.pixels().len() as f32);
+        character_brightness_list.push(CharacterBrightness { character, brightness });
     }
 
-    character_density_list.sort_by(|a, b| a.density.cmp(&b.density));
-    let character_list_sorted = character_density_list
-        .iter()
-        .map(|x| x.character)
-        .collect::<Vec<char>>();
+    character_brightness_list.sort_by(|a, b| a.brightness.partial_cmp(&b.brightness).unwrap());
+
+    let mut character_list_sorted: Vec<char> = vec![];
+    let increment_step = (character_brightness_list[character_brightness_list.len()-1].brightness - character_brightness_list[0].brightness) / (num_char as f32);
+    let mut current_value = character_brightness_list[0].brightness;
+    for item in character_brightness_list.clone(){
+        if item.brightness >= current_value{
+            character_list_sorted.push(item.character);
+            current_value += increment_step;
+        }
+    }
+
+    if character_list_sorted[character_list_sorted.len()-1] != character_brightness_list[character_brightness_list.len()-1].character{
+        character_list_sorted.push(character_brightness_list[character_brightness_list.len()-1].character);
+    }
 
     return character_list_sorted;
 }

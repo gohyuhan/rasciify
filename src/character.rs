@@ -1,6 +1,6 @@
 use ab_glyph::FontRef;
 
-use crate::utils::utils::sort_character_density;
+use crate::utils::utils::sort_character_brightness;
 
 pub struct FontData<'a> {
     pub character_list: Vec<char>,
@@ -187,7 +187,7 @@ impl CharacterType {
                     include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
-                    character_list: sort_character_density(
+                    character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
                         20.0,
@@ -204,7 +204,11 @@ impl CharacterType {
                     include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
-                    character_list: self.get_character_array(),
+                    character_list: sort_character_brightness(
+                        self.get_character_array(),
+                        font_data,
+                        20.0,
+                    ),
                     font,
                     font_data,
                     scale: 20.0,
@@ -217,7 +221,11 @@ impl CharacterType {
                     include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
-                    character_list: self.get_character_array(),
+                    character_list: sort_character_brightness(
+                        self.get_character_array(),
+                        font_data,
+                        20.0,
+                    ),
                     font,
                     font_data,
                     scale: 20.0,
