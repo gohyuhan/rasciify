@@ -2,9 +2,9 @@ use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Rgb};
 use imageproc::drawing::draw_text_mut;
 
 use crate::{
-    character::CharacterType,
+    character::{CharacterType, FontData},
     utils::{
-        font::{get_character_dimensions, get_fonts, FontData},
+        font::get_character_dimensions,
         utils::{
             check_and_create_directory, get_character_and_rgb_based_on_rgb,
             get_character_line_list_based_on_luma,
@@ -12,7 +12,7 @@ use crate::{
     },
 };
 
-/// Converts an image to ASCII art.
+// Converts an image to ASCII art.
 pub fn image_to_image(
     path: &str,
     num_cols: u32,
@@ -87,14 +87,14 @@ pub fn image_to_image(
     }
 }
 
-fn grayscale_to_ascii_img(
+pub fn grayscale_to_ascii_img(
     img: &DynamicImage,
     num_cols: u32,
     character_type: CharacterType,
     is_white_bg: bool,
 ) -> ImageBuffer<Luma<u8>, Vec<u8>> {
     let (width, height) = img.dimensions();
-    let character_data: FontData = get_fonts(character_type).unwrap();
+    let character_data: FontData = character_type.get_character_data();
     let mut num_cols = num_cols;
     // width per cell
     let mut cell_width = width / num_cols;
@@ -154,14 +154,14 @@ fn grayscale_to_ascii_img(
     return out_image;
 }
 
-fn rgb_to_rgb_ascii_img(
+pub fn rgb_to_rgb_ascii_img(
     img: &DynamicImage,
     num_cols: u32,
     character_type: CharacterType,
     is_white_bg: bool,
 ) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     let (width, height) = img.dimensions();
-    let character_data: FontData = get_fonts(character_type).unwrap();
+    let character_data: FontData = character_type.get_character_data();
     let mut num_cols = num_cols;
     // width per cell
     let mut cell_width = width / num_cols;

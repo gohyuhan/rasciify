@@ -1,6 +1,10 @@
 use std::{fs::create_dir_all, path::Path};
 
-use image::{DynamicImage, GenericImageView, Pixel, Rgb};
+use ab_glyph::FontRef;
+use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Pixel, Rgb};
+use imageproc::drawing::draw_text_mut;
+
+use super::font::get_character_dimensions;
 
 pub fn check_and_create_directory(output_directory: Option<&str>) -> Result<(), String> {
     if output_directory.is_some() {
@@ -74,4 +78,52 @@ pub fn get_character_and_rgb_based_on_rgb(
     // Calculate the index into the ASCII character set.
     let index = (average_rgb * index_scale_factor).round() as usize;
     return (character_list[index], pixel_rgb);
+}
+
+// this was used to sort the character from less dense to more dense
+// dense in here means the pixel that was taken up by a character,
+// example "@" is more dense than ":"
+#[derive(Debug)]
+struct CharacterDensity {
+    pub character: char,
+    pub density: u32,
+}
+
+pub fn sort_character_density(
+    character_list: Vec<char>,
+    font_data: &'static [u8],
+    scale: f32,
+) -> Vec<char> {
+    let mut character_density_list: Vec<CharacterDensity> = vec![];
+    for character in character_list.clone() {
+        let mut density = 0;
+        let font = FontRef::try_from_slice(font_data).unwrap();
+
+        let (width, height) = get_character_dimensions(scale, character, font_data);
+        let mut img: ImageBuffer<Luma<u8>, Vec<u8>> =
+            ImageBuffer::from_pixel(width, height, Luma([0]));
+        draw_text_mut(
+            &mut img,
+            Luma([255]),
+            0,
+            0,
+            scale,
+            &font,
+            &character.to_string(),
+        );
+        for pixel in img.pixels() {
+            if pixel.0[0] != 0 {
+                density += 1;
+            }
+        }
+        character_density_list.push(CharacterDensity { character, density });
+    }
+
+    character_density_list.sort_by(|a, b| a.density.cmp(&b.density));
+    let character_list_sorted = character_density_list
+        .iter()
+        .map(|x| x.character)
+        .collect::<Vec<char>>();
+
+    return character_list_sorted;
 }

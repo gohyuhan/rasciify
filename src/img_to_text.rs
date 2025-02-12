@@ -6,7 +6,7 @@ use crate::{
 };
 use image::{DynamicImage, GenericImageView};
 
-/// Converts an image to ASCII art.
+// Converts an image to ASCII art.
 pub fn image_to_text(
     path: &str,
     num_cols: u32,
@@ -34,7 +34,7 @@ pub fn image_to_text(
     }
 }
 
-fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> String {
+pub fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> String {
     let (width, height) = img.dimensions();
     let mut ascii = String::new();
     let mut num_cols = num_cols;
@@ -42,9 +42,9 @@ fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> Strin
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
     let character_array: Vec<char> = if complex {
-        CharacterType::Complex.get_character_array()
+        CharacterType::Complex.get_character_data().character_list
     } else {
-        CharacterType::Simple.get_character_array()
+        CharacterType::Simple.get_character_data().character_list
     };
 
     if num_cols > width || num_rows > height {
