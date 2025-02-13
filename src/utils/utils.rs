@@ -1,7 +1,7 @@
 use std::{fs::create_dir_all, path::Path};
 
-use ab_glyph::FontRef;
-use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Pixel, Rgb};
+use ab_glyph::{FontRef, PxScale};
+use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Pixel, Rgba};
 use imageproc::drawing::draw_text_mut;
 
 use super::font::get_character_dimensions;
@@ -54,7 +54,7 @@ pub fn get_character_line_list_based_on_luma(
     return character_line_list;
 }
 
-pub fn get_character_and_rgb_based_on_rgb(
+pub fn get_character_and_rgba_based_on_rgba(
     character_list: Vec<char>,
     img: &DynamicImage,
     cell_width: u32,
@@ -63,21 +63,21 @@ pub fn get_character_and_rgb_based_on_rgb(
     height: u32,
     current_row: u32,
     current_column: u32,
-) -> (char, Rgb<u8>) {
+) -> (char, Rgba<u8>) {
     let index_scale_factor = (character_list.len() - 1) as f32 / 255.0;
-    let pixel_rgb = img
+    let pixel_rgba = img
         .get_pixel(
             (current_column * cell_width).min(width),
             (current_row * cell_height).min(height),
         )
-        .to_rgb();
+        .to_rgba();
 
     // Get the rgb value
-    let average_rgb = (pixel_rgb[0] as f32 + pixel_rgb[1] as f32 + pixel_rgb[2] as f32) / 3.0;
+    let average_rgb = (pixel_rgba[0] as f32 + pixel_rgba[1] as f32 + pixel_rgba[2] as f32) / 3.0;
 
     // Calculate the index into the ASCII character set.
     let index = (average_rgb * index_scale_factor).round() as usize;
-    return (character_list[index], pixel_rgb);
+    return (character_list[index], pixel_rgba);
 }
 
 // this was used to sort the character based on its brightness
@@ -90,7 +90,7 @@ struct CharacterBrightness {
 pub fn sort_character_brightness(
     character_list: Vec<char>,
     font_data: &'static [u8],
-    scale: f32,
+    scale: PxScale,
 ) -> Vec<char> {
     let num_char = character_list.len();
     let mut character_brightness_list: Vec<CharacterBrightness> = vec![];
@@ -109,24 +109,34 @@ pub fn sort_character_brightness(
             &font,
             &character.to_string(),
         );
-        let brightness = (img.pixels().map(|x| x[0] as f32).sum::<f32>()) / (img.pixels().len() as f32);
-        character_brightness_list.push(CharacterBrightness { character, brightness });
+        let brightness =
+            (img.pixels().map(|x| x[0] as f32).sum::<f32>()) / (img.pixels().len() as f32);
+        character_brightness_list.push(CharacterBrightness {
+            character,
+            brightness,
+        });
     }
 
     character_brightness_list.sort_by(|a, b| a.brightness.partial_cmp(&b.brightness).unwrap());
 
     let mut character_list_sorted: Vec<char> = vec![];
-    let increment_step = (character_brightness_list[character_brightness_list.len()-1].brightness - character_brightness_list[0].brightness) / (num_char as f32);
+    let increment_step = (character_brightness_list[character_brightness_list.len() - 1]
+        .brightness
+        - character_brightness_list[0].brightness)
+        / (num_char as f32);
     let mut current_value = character_brightness_list[0].brightness;
-    for item in character_brightness_list.clone(){
-        if item.brightness >= current_value{
+    for item in character_brightness_list.clone() {
+        if item.brightness >= current_value {
             character_list_sorted.push(item.character);
             current_value += increment_step;
         }
     }
 
-    if character_list_sorted[character_list_sorted.len()-1] != character_brightness_list[character_brightness_list.len()-1].character{
-        character_list_sorted.push(character_brightness_list[character_brightness_list.len()-1].character);
+    if character_list_sorted[character_list_sorted.len() - 1]
+        != character_brightness_list[character_brightness_list.len() - 1].character
+    {
+        character_list_sorted
+            .push(character_brightness_list[character_brightness_list.len() - 1].character);
     }
 
     return character_list_sorted;

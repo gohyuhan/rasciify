@@ -1,4 +1,4 @@
-use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Rgb};
+use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Rgba};
 use imageproc::drawing::draw_text_mut;
 
 use crate::{
@@ -6,7 +6,7 @@ use crate::{
     utils::{
         font::get_character_dimensions,
         utils::{
-            check_and_create_directory, get_character_and_rgb_based_on_rgb,
+            check_and_create_directory, get_character_and_rgba_based_on_rgba,
             get_character_line_list_based_on_luma,
         },
     },
@@ -27,25 +27,25 @@ pub fn image_to_image(
     // process to generate ascii rgb image or ascii grayscale image
     if is_color {
         // todo: process image to rgb ascii image
-        let rgb_ascii_img = rgb_to_rgb_ascii_img(&img, num_cols, character_type, is_white_bg);
+        let rgba_ascii_img = rgba_to_rgba_ascii_img(&img, num_cols, character_type, is_white_bg);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
                     let path = if let Some(output_dir) = output_directory {
-                        format!("{}/{}.jpg", output_dir, filename)
+                        format!("{}/{}.png", output_dir, filename)
                     } else {
-                        format!("{}.jpg", filename)
+                        format!("{}.png", filename)
                     };
-                    let _ = rgb_ascii_img.save(path);
+                    let _ = rgba_ascii_img.save(path);
                     if output_directory.is_some() {
                         return Ok(format!(
-                            "Image saved to path: {} as {}.jpg",
+                            "Image saved to path: {} as {}.png",
                             output_directory.unwrap(),
                             filename
                         ));
                     } else {
                         return Ok(format!(
-                            "Image saved to current directory as {}.jpg",
+                            "Image saved to current directory as {}.png",
                             filename
                         ));
                     }
@@ -154,12 +154,12 @@ pub fn grayscale_to_ascii_img(
     return out_image;
 }
 
-pub fn rgb_to_rgb_ascii_img(
+pub fn rgba_to_rgba_ascii_img(
     img: &DynamicImage,
     num_cols: u32,
     character_type: CharacterType,
     is_white_bg: bool,
-) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
+) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     let (width, height) = img.dimensions();
     let character_data: FontData = character_type.get_character_data();
     let mut num_cols = num_cols;
@@ -188,16 +188,16 @@ pub fn rgb_to_rgb_ascii_img(
     let output_image_height = char_height * num_rows;
 
     // create a blank image to draw the ASCII art on
-    let mut out_image: ImageBuffer<Rgb<u8>, Vec<u8>> = ImageBuffer::from_pixel(
+    let mut out_image: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::from_pixel(
         output_image_width,
         output_image_height,
-        Rgb([background_code, background_code, background_code]),
+        Rgba([background_code, background_code, background_code, 255]),
     );
 
     // Get the character based on the mean rgb value and \draw it on the image pixel by pixel
     for i in 0..num_rows {
         for j in 0..num_cols {
-            let (character, rgb_value) = get_character_and_rgb_based_on_rgb(
+            let (character, rgba_value) = get_character_and_rgba_based_on_rgba(
                 character_data.character_list.clone(),
                 img,
                 cell_width,
@@ -207,9 +207,10 @@ pub fn rgb_to_rgb_ascii_img(
                 i,
                 j,
             );
+
             draw_text_mut(
                 &mut out_image,
-                rgb_value,
+                rgba_value,
                 (j * char_width) as i32,
                 (i * char_height) as i32,
                 character_data.scale,
