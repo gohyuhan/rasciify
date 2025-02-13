@@ -151,6 +151,7 @@ impl CharacterType {
     }
 
     pub fn get_character_data<'a>(&self) -> FontData<'a> {
+        let mut scale = PxScale { x: 20.0, y: 20.0 };
         match self {
             CharacterType::Simple => {
                 let font_data: &'static [u8] =
@@ -160,7 +161,7 @@ impl CharacterType {
                     character_list: self.get_character_array(),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: '.',
                 };
                 return font_data_struct;
@@ -173,7 +174,7 @@ impl CharacterType {
                     character_list: self.get_character_array(),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: '.',
                 };
                 return font_data_struct;
@@ -186,11 +187,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'A',
                 };
                 return font_data_struct;
@@ -203,11 +204,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'Ш',
                 };
                 return font_data_struct;
@@ -220,11 +221,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'Ü',
                 };
                 return font_data_struct;
@@ -237,11 +238,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'Ë',
                 };
                 return font_data_struct;
@@ -254,11 +255,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'Ñ',
                 };
                 return font_data_struct;
@@ -271,11 +272,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'È',
                 };
                 return font_data_struct;
@@ -288,11 +289,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'Ó',
                 };
                 return font_data_struct;
@@ -305,11 +306,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'ł',
                 };
                 return font_data_struct;
@@ -322,16 +323,17 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 20.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 20.0, y: 20.0 },
+                    scale: scale,
                     character: 'अ',
                 };
                 return font_data_struct;
             }
             CharacterType::Ar => {
+                scale = PxScale { x: 40.0, y: 20.0 };
                 let font_data: &'static [u8] =
                     include_bytes!("utils/fonts/azarmehr/AzarMehrMonospacedSansBold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
@@ -339,48 +341,51 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 40.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 40.0, y: 20.0 },
+                    scale: scale,
                     character: 'ظ',
                 };
                 return font_data_struct;
             }
             CharacterType::Bn => {
+                scale = PxScale { x: 30.0, y: 20.0 };
                 let font_data: &'static [u8] = include_bytes!("utils/fonts/mitra/mitra.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 30.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 30.0, y: 20.0 },
+                    scale: scale,
                     character: 'আ',
                 };
                 return font_data_struct;
             }
             CharacterType::ZhZhuyin => {
+                scale = PxScale { x: 10.0, y: 20.0 };
                 let font_data: &'static [u8] = include_bytes!("utils/fonts/simsun/SimSun-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 10.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 10.0, y: 20.0 },
+                    scale: scale,
                     character: 'ㄠ',
                 };
                 return font_data_struct;
             }
             CharacterType::JpHiragana => {
+                scale = PxScale { x: 15.0, y: 20.0 };
                 let font_data: &'static [u8] =
                     include_bytes!("utils/fonts/arial-unicode/Arial-Unicode-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
@@ -388,16 +393,17 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 15.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 15.0, y: 20.0 },
+                    scale: scale,
                     character: 'あ',
                 };
                 return font_data_struct;
             }
             CharacterType::JpKatakana => {
+                scale = PxScale { x: 15.0, y: 20.0 };
                 let font_data: &'static [u8] =
                     include_bytes!("utils/fonts/arial-unicode/Arial-Unicode-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
@@ -405,16 +411,17 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 15.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 15.0, y: 20.0 },
+                    scale: scale,
                     character: 'ア',
                 };
                 return font_data_struct;
             }
             CharacterType::Kr => {
+                scale = PxScale { x: 15.0, y: 20.0 };
                 let font_data: &'static [u8] =
                     include_bytes!("utils/fonts/arial-unicode/Arial-Unicode-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
@@ -422,16 +429,17 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 15.0, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 15.0, y: 20.0 },
+                    scale: scale,
                     character: 'ㅠ',
                 };
                 return font_data_struct;
             }
             CharacterType::Vi => {
+                scale = PxScale { x: 22.5, y: 20.0 };
                 let font_data: &'static [u8] =
                     include_bytes!("utils/fonts/roboto/RobotoMono-Bold.ttf");
                 let font = FontRef::try_from_slice(font_data).unwrap();
@@ -439,11 +447,11 @@ impl CharacterType {
                     character_list: sort_character_brightness(
                         self.get_character_array(),
                         font_data,
-                        PxScale { x: 22.5, y: 20.0 },
+                        scale,
                     ),
                     font,
                     font_data,
-                    scale: PxScale { x: 22.5, y: 20.0 },
+                    scale: scale,
                     character: 'Ỵ',
                 };
                 return font_data_struct;
