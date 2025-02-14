@@ -27,7 +27,7 @@ pub fn image_to_image(
     // process to generate ascii rgb image or ascii grayscale image
     if is_color {
         // todo: process image to rgb ascii image
-        let rgba_ascii_img = rgba_to_rgba_ascii_img(&img, num_cols, character_type, is_white_bg);
+        let rgba_ascii_img = rgb_to_rgb_ascii_img(&img, num_cols, character_type, is_white_bg);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
@@ -55,9 +55,8 @@ pub fn image_to_image(
             Err(e) => Err(e),
         }
     } else {
-        let gray_img = img.grayscale();
         let gray_ascii_img =
-            grayscale_to_ascii_img(&gray_img, num_cols, character_type, is_white_bg);
+            grayscale_to_ascii_img(&img, num_cols, character_type, is_white_bg);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
@@ -93,6 +92,7 @@ pub fn grayscale_to_ascii_img(
     character_type: CharacterType,
     is_white_bg: bool,
 ) -> ImageBuffer<Luma<u8>, Vec<u8>> {
+    let img = img.grayscale();
     let (width, height) = img.dimensions();
     let character_data: FontData = character_type.get_character_data();
     let mut num_cols = num_cols;
@@ -154,7 +154,7 @@ pub fn grayscale_to_ascii_img(
     return out_image;
 }
 
-pub fn rgba_to_rgba_ascii_img(
+pub fn rgb_to_rgb_ascii_img(
     img: &DynamicImage,
     num_cols: u32,
     character_type: CharacterType,

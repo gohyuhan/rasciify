@@ -15,9 +15,8 @@ pub fn image_to_text(
     filename: Option<&str>,
 ) -> Result<String, String> {
     let img = image::open(path).expect("Failed to open image");
-    let gray_img = img.grayscale();
 
-    let ascii = grayscale_to_ascii(&gray_img, num_cols, complex);
+    let ascii = grayscale_to_ascii(&img, num_cols, complex);
 
     match check_and_create_directory(output_directory) {
         Ok(_) => {
@@ -35,6 +34,7 @@ pub fn image_to_text(
 }
 
 pub fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> String {
+    let img = img.grayscale();
     let (width, height) = img.dimensions();
     let mut ascii = String::new();
     let mut num_cols = num_cols;

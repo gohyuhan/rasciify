@@ -2,6 +2,12 @@
 name = "rasciify"
 version = "0.1.0"
 edition = "2021"
+authors = ["Goh Yu Han <gohyuhan123456@gmail.com>"]
+
+description = "For generating ASCII art ( RGB/grayscale image or text based ) based on image provided."
+license = "MIT"
+repository = "https://github.com/gohyuhan/rasciify"
+documentation = "https://github.com/gohyuhan/rasciify/blob/main/docs/usage.md"
 
 [dependencies]
 ab_glyph = "0.2.29"
