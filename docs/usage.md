@@ -3,6 +3,9 @@
 - [Image to Grayscale Image](#image-to-grayscale-image)
 - [Image to RGB Image](#image-to-rgb-image)
 
+# 🔠 CharacterType
+To see all the supported characters list, check out [here](character.md)
+
 &nbsp;
 ## Image to Text
 To generate ASCII art in the form of text from an image, you can use the `image_to_text()` method. This method will save the ASCII art in the form of a txt file.
