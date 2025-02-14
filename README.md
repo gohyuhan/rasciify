@@ -29,8 +29,9 @@ To check out how to use ``rasciify``, check the [docs](docs/usage.md) here
 
 ## Change Logs
 ### v0.1.0
-Released: 2025-02-14 
-Initial crate Publish. This includes operation like:
+Released: 2025-02-14  
+Initial crate Publish.  
+This includes operation like:
 
 - image to text based ASCII art
 - image to RGB image ASCII art
