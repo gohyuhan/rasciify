@@ -19,7 +19,7 @@ This project ``rasciify`` allows you to easily generate ASCII art within a rust 
 If you need further modification, you can also choose to obtain it in the form of ``String`` or ``ImageBuffer``. Check [here](docs/usage.md) to learn more.
 
 ## Installation
-To install gnupg, you can use the following command:
+To install rasciify, you can use the following command:
 To add ``rasciify`` to be use in a rust program
 ```bash
 cargo add rasciify
