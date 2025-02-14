@@ -1,6 +1,6 @@
 # rasciify
 
-rasciify was design to transform images into ASCII art. It was developed in Rust, where you can upload any image and convert it to RGB, grayscale, or text-based artwork within any rust program.
+rasciify was design to transform images into ASCII art. It was developed in Rust, where you can provide image to generate RGB, grayscale, or text-based artwork within any rust program.
 
 ![badge](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Rust Version](https://img.shields.io/badge/rust-1.83.0-blue)
