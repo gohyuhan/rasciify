@@ -85,7 +85,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             panic!("❌ SHA256 checksum verification failed!");
         }
 
-        let _ = remove_dir_all(fonts_dir);
+        if fonts_dir.exists(){
+            let _ = remove_dir_all(fonts_dir);
+        }
 
         // read and extract fonts file 
         println!("Extracting fonts...");
