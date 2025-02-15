@@ -9,7 +9,7 @@ license = "MIT"
 repository = "https://github.com/gohyuhan/rasciify"
 documentation = "https://github.com/gohyuhan/rasciify/blob/main/docs/usage.md"
 categories = ["image", "image_processing"]
-keywords = ["image", "ascii-art", "ascii", "image-processing", "rgb", "grayscale", "text-based", "image-to-ascii", "image-to-text", "ascii-art-generator"]
+keywords = ["image", "ascii", "image-processing", "ascii-art-generator"]
 
 exclude = [
     "assets/fonts"
