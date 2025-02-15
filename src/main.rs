@@ -1,8 +1,13 @@
-mod img_to_text;
-mod utils;
-mod character;
-mod img_to_img;
+pub mod character;
+pub use character::*;
 
-fn main() {
-    
-}
+pub mod img_to_img;
+pub use img_to_img::*;
+
+pub mod img_to_text;
+pub use img_to_text::*;
+
+pub mod utils;
+pub use utils::*;
+
+fn main() {}

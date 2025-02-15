@@ -1,3 +1,5 @@
+use std::{env, fs::read};
+
 use ab_glyph::{FontRef, PxScale};
 
 use crate::utils::utils::sort_character_brightness;
@@ -10,7 +12,7 @@ pub struct FontData<'a> {
     pub character: char,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum CharacterType {
     Simple,     // simple symbol chracters
     Complex,    // complex symbol characters
@@ -152,10 +154,13 @@ impl CharacterType {
 
     pub fn get_character_data<'a>(&self) -> FontData<'a> {
         let mut scale = PxScale { x: 20.0, y: 20.0 };
+        let font_dir = env::current_dir()
+            .expect("Failed to get current directory")
+            .join("assets/fonts");
         match self {
             CharacterType::Simple => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: self.get_character_array(),
@@ -167,8 +172,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Complex => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: self.get_character_array(),
@@ -180,8 +185,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::En => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -197,8 +202,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Ru => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -214,8 +219,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::De => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -231,8 +236,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Fr => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -248,8 +253,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Es => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -265,8 +270,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::It => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -282,8 +287,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Pt => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -299,8 +304,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Pl => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -316,8 +321,8 @@ impl CharacterType {
                 return font_data_struct;
             }
             CharacterType::Hi => {
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/monotty/monotty-dev2.ttf");
+                let font_vec = read(font_dir.join("monotty/monotty-dev2.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -334,8 +339,9 @@ impl CharacterType {
             }
             CharacterType::Ar => {
                 scale = PxScale { x: 40.0, y: 20.0 };
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/azarmehr/AzarMehrMonospacedSansBold.ttf");
+                let font_vec =
+                    read(font_dir.join("azarmehr/AzarMehrMonospacedSansBold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -352,7 +358,8 @@ impl CharacterType {
             }
             CharacterType::Bn => {
                 scale = PxScale { x: 30.0, y: 20.0 };
-                let font_data: &'static [u8] = include_bytes!("utils/fonts/mitra/mitra.ttf");
+                let font_vec = read(font_dir.join("mitra/mitra.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -369,7 +376,8 @@ impl CharacterType {
             }
             CharacterType::ZhZhuyin => {
                 scale = PxScale { x: 10.0, y: 20.0 };
-                let font_data: &'static [u8] = include_bytes!("utils/fonts/simsun/SimSun-Bold.ttf");
+                let font_vec = read(font_dir.join("simsun/SimSun-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -386,8 +394,8 @@ impl CharacterType {
             }
             CharacterType::JpHiragana => {
                 scale = PxScale { x: 15.0, y: 20.0 };
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/arial-unicode/Arial-Unicode-Bold.ttf");
+                let font_vec = read(font_dir.join("arial-unicode/Arial-Unicode-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -404,8 +412,8 @@ impl CharacterType {
             }
             CharacterType::JpKatakana => {
                 scale = PxScale { x: 15.0, y: 20.0 };
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/arial-unicode/Arial-Unicode-Bold.ttf");
+                let font_vec = read(font_dir.join("arial-unicode/Arial-Unicode-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -422,8 +430,8 @@ impl CharacterType {
             }
             CharacterType::Kr => {
                 scale = PxScale { x: 15.0, y: 20.0 };
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/arial-unicode/Arial-Unicode-Bold.ttf");
+                let font_vec = read(font_dir.join("arial-unicode/Arial-Unicode-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
@@ -440,8 +448,8 @@ impl CharacterType {
             }
             CharacterType::Vi => {
                 scale = PxScale { x: 22.5, y: 20.0 };
-                let font_data: &'static [u8] =
-                    include_bytes!("utils/fonts/roboto/RobotoMono-Bold.ttf");
+                let font_vec = read(font_dir.join("roboto/RobotoMono-Bold.ttf")).unwrap();
+                let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
                     character_list: sort_character_brightness(
