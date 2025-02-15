@@ -31,7 +31,7 @@ let _ = image_to_text(
 );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_ascii_rgb_img.jpeg)
+![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/text-example.png)
 
 
 ### Result as String
@@ -140,7 +140,7 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_ascii_rgb_img.png)
+![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_ascii_rgb_img.jpeg)
 
 
 ### Result as ImageBuffer<Rgba<u8>, Vec<u8>>
