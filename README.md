@@ -29,7 +29,7 @@ To check out how to use ``rasciify``, check the [docs](docs/usage.md) here
 
 ## Change Logs
 ### v0.1.0
-Released: 2025-02-14  
+Released: 2025-02-15  
 Initial crate Publish.  
 This includes operation like:
 
