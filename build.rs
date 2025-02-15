@@ -64,7 +64,7 @@ fn all_fonts_file_available() -> bool {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let zip_url = "https://github.com/gohyuhan/rasciify/releases/download/v0.1.0/fonts.zip";
+    let zip_url = "https://github.com/gohyuhan/rasciify/releases/download/v0.1.1/fonts.zip";
     let expected_sha256 = "814a4f066d8b2c2cabcd7dcabb5ca4084c5b5bf8143e6353e56f2b839673bbf6";
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("assets");
