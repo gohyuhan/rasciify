@@ -1,7 +1,7 @@
 use sha2::{Digest, Sha256};
-use std::fs::{self, remove_dir_all, remove_file, File};
+use std::fs::{self, create_dir_all, remove_dir_all, remove_file, File};
 use std::io::{copy, Cursor, Read};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::{env, error::Error};
 use zip::ZipArchive;
 
@@ -30,7 +30,7 @@ fn extract_zip(bytes: &[u8], output_dir: &Path) -> Result<(), Box<dyn Error>> {
         }
 
         if file.is_dir() {
-            fs::create_dir_all(&outpath)?;
+            create_dir_all(&outpath)?;
         } else {
             if let Some(parent) = outpath.parent() {
                 fs::create_dir_all(parent)?;
@@ -52,7 +52,7 @@ fn all_fonts_file_available() -> bool {
         "arial-unicode/Arial-Unicode-Bold.ttf",
         "roboto/RobotoMono-Bold.ttf"
     ];
-    let font_dir = env::current_dir().unwrap().join("assets/fonts");
+    let font_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("assets/fonts");
     for item in files_array {
         let file_path = font_dir.join(item);
         if !file_path.exists() {
@@ -67,9 +67,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     let zip_url = "https://github.com/gohyuhan/rasciify/releases/download/v0.1.0/fonts.zip";
     let expected_sha256 = "814a4f066d8b2c2cabcd7dcabb5ca4084c5b5bf8143e6353e56f2b839673bbf6";
 
-    let out_dir = env::current_dir().unwrap().join("assets");
+    let out_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("assets");
     let fonts_dir = out_dir.join("fonts");
     let zip_path = out_dir.join("fonts.zip");
+    if !out_dir.exists(){
+        create_dir_all(out_dir.clone())?;
+    }
 
     // Download if not cached
     if !all_fonts_file_available() {

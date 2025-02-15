@@ -1,4 +1,4 @@
-use std::{env, fs::read};
+use std::{env, fs::read, path::PathBuf};
 
 use ab_glyph::{FontRef, PxScale};
 
@@ -154,12 +154,11 @@ impl CharacterType {
 
     pub fn get_character_data<'a>(&self) -> FontData<'a> {
         let mut scale = PxScale { x: 20.0, y: 20.0 };
-        let font_dir = env::current_dir()
-            .expect("Failed to get current directory")
-            .join("assets/fonts");
+        let font_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("assets/fonts");
         match self {
             CharacterType::Simple => {
                 let font_vec = read(font_dir.join("dejavu/DejaVuSansMono-Bold.ttf")).unwrap();
+                println!("{:?}", font_dir);
                 let font_data: &'static [u8] = Box::leak(font_vec.into_boxed_slice());
                 let font = FontRef::try_from_slice(font_data).unwrap();
                 let font_data_struct: FontData = FontData {
