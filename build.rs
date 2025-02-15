@@ -52,7 +52,7 @@ fn all_fonts_file_available() -> bool {
         "arial-unicode/Arial-Unicode-Bold.ttf",
         "roboto/RobotoMono-Bold.ttf"
     ];
-    let font_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("assets/fonts");
+    let font_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("assets/fonts");
     for item in files_array {
         let file_path = font_dir.join(item);
         if !file_path.exists() {
@@ -67,7 +67,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let zip_url = "https://github.com/gohyuhan/rasciify/releases/download/v0.1.0/fonts.zip";
     let expected_sha256 = "814a4f066d8b2c2cabcd7dcabb5ca4084c5b5bf8143e6353e56f2b839673bbf6";
 
-    let out_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join("assets");
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("assets");
     let fonts_dir = out_dir.join("fonts");
     let zip_path = out_dir.join("fonts.zip");
     if !out_dir.exists(){
@@ -104,5 +104,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rustc-env=RASCIIFY_ASSET_PATH={}", out_dir.display());
     Ok(())
 }
