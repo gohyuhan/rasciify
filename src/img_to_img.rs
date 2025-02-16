@@ -55,8 +55,7 @@ pub fn image_to_image(
             Err(e) => Err(e),
         }
     } else {
-        let gray_ascii_img =
-            grayscale_to_ascii_img(&img, num_cols, character_type, is_white_bg);
+        let gray_ascii_img = grayscale_to_ascii_img(&img, num_cols, character_type, is_white_bg);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
