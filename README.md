@@ -28,8 +28,13 @@ cargo add rasciify
 To check out how to use ``rasciify``, check the [docs](docs/usage.md) here
 
 ## Change Logs
+### v0.1.2
+Released: 2025-02-17  
+Modify the font files to only include supports for character used.  
+Bundle the font assets into the crate.
+
 ### v0.1.1
-Released: 2025-02-15
+Released: 2025-02-15  
 A fix to path where build.rs save the pulled font assets and the path used to load the font assets.
 
 ### v0.1.0
