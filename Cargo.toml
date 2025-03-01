@@ -1,6 +1,6 @@
 [package]
 name = "rasciify"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 authors = ["Goh Yu Han <gohyuhan123456@gmail.com>"]
 
@@ -12,6 +12,7 @@ keywords = ["image", "ascii", "image-processing", "ascii-art-generator"]
 
 [dependencies]
 ab_glyph = "0.2.29"
+gif = "0.13.1"
 image = "0.25.5"
 imageproc = "0.25.0"
 rusttype = "0.9.3"
