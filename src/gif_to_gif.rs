@@ -303,7 +303,7 @@ pub fn encode_images_to_ascii_gray_gif(
 //
 //    Include process:
 //      - process gif frame to ascii art
-//      - converting dynamic image to gif comatible frame (both rgb and grayscale)
+//      - converting dynamic image to gif compatible frame (both rgb and grayscale) [in future when resizing is supported]
 //
 // ***************************************************************************************
 
