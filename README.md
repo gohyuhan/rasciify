@@ -28,6 +28,15 @@ cargo add rasciify
 To check out how to use ``rasciify``, check the [docs](docs/usage.md) here
 
 ## Change Logs
+### v0.2.0
+Released: 2025-03-02
+Add new supported character set.  
+- Bar
+- Chinese Simplified
+- Chinese Traditional
+
+Add new feature to turn GIF into GIF of ascii art in both rgb and grayscale
+
 ### v0.1.2
 Released: 2025-02-17  
 Modify the font files to only include supports for character used.  

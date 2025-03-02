@@ -1,4 +1,4 @@
-use std::{fs::create_dir_all, path::Path};
+use std::{collections::HashMap, fs::create_dir_all, path::Path};
 
 use ab_glyph::{FontRef, PxScale};
 use image::{DynamicImage, GenericImageView, ImageBuffer, Luma, Pixel, Rgba};
@@ -140,4 +140,61 @@ pub fn sort_character_brightness(
     }
 
     return character_list_sorted;
+}
+
+// get the flatten rgb and also the color map that we need to pass to encoder for mapping color
+pub fn get_img_flatten_rgb_and_color_map(
+    img_list: &Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>,
+) -> (Vec<Vec<u8>>, Vec<u8>) {
+    let mut flatten_rgb: Vec<Vec<u8>> = Vec::new();
+    let mut color_map: Vec<u8> = Vec::new();
+    let mut color_map_hashmap = HashMap::new();
+
+    // Step 1: Collect RGB colors from all images
+    for img in img_list {
+        let mut flat_rgb_list: Vec<u8> = Vec::new();
+        for pixel in img.pixels() {
+            let rgb = [pixel[0], pixel[1], pixel[2]]; // Ignore alpha
+
+            // Add to palette if it's new (up to 256 colors)
+            if !color_map_hashmap.contains_key(&rgb) && color_map.len() / 3 < 256 {
+                color_map_hashmap.insert(rgb, color_map.len() / 3);
+                color_map.extend_from_slice(&rgb);
+            }
+
+            flat_rgb_list.extend_from_slice(&[pixel[0], pixel[1], pixel[2]]);
+        }
+        flatten_rgb.push(flat_rgb_list);
+    }
+
+    // Step 2: Handle palette overflow (find nearest color)
+    while color_map.len() / 3 < 256 {
+        color_map.extend_from_slice(&[0, 0, 0]); // Fill remaining slots with black
+    }
+
+    return (flatten_rgb, color_map);
+}
+
+// get the flatten rgb and also the color map that we need to pass to encoder for mapping color
+pub fn get_img_flatten_gray_and_color_map(
+    img_list: &Vec<ImageBuffer<Luma<u8>, Vec<u8>>>,
+) -> (Vec<Vec<u8>>, Vec<u8>) {
+    let mut flatten_gray: Vec<Vec<u8>> = Vec::new();
+    let mut color_map: Vec<u8> = Vec::new();
+
+    // Step 1: Collect gray colors from all images
+    for img in img_list {
+        let mut flat_gray_list: Vec<u8> = Vec::new();
+        for pixel in img.pixels() {
+            flat_gray_list.extend_from_slice(&[pixel[0], pixel[0], pixel[0]]);
+        }
+        flatten_gray.push(flat_gray_list);
+    }
+
+    // Step 2: generate a color map of grayscale
+    for i in 0..=255 {
+        color_map.extend_from_slice(&[i, i, i]);
+    }
+
+    return (flatten_gray, color_map);
 }

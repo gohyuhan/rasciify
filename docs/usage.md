@@ -2,6 +2,8 @@
 - [Image to Text](#image-to-text)
 - [Image to Grayscale Image](#image-to-grayscale-image)
 - [Image to RGB Image](#image-to-rgb-image)
+- [GIF to Grayscale GIF](#gif-to-grayscale-gif)
+- [GIF to RGB GIF](#gif-to-rgb-gif)
 
 # 🔠 CharacterType
 To see all the supported characters list, check out [here](character.md)
@@ -169,3 +171,82 @@ let ascii_rgb_image_buffer:ImageBuffer<Rgba<u8>, Vec<u8>> = rgb_to_rgb_ascii_img
     false,
 );
 ```
+
+&nbsp;
+## GIF to Grayscale GIF
+To generate ASCII gif in the form of grayscale gif from a gif, you can use the `gif_to_gif()` method. This method will save the grayscale ASCII gif in the form of gif file.
+
+> [!WARNING] 
+> The dimension of each frame in the gif need to be consistent, else unpredictable behaviour might occur
+
+`gif_to_gif()` takes in 7 parameter in the following sequence.
+| parameter        | type             | description                                                                                |
+|------------------|------------------|--------------------------------------------------------------------------------------------|
+| path             | `&str`           | Path of the gif file                                                                       |    
+| num_cols         | `u32`            | Number of columns of the generated ASCII gif                                               |  
+| character        | `CharacterType`  | The characters to be used for the ASCII gif                                                |
+| output_directory | `Option<&str>`   | Path of the directory where the ASCII gif should be saved                                  |
+| filename         | `Option<&str>`   | Name for the ASCII gif file ( extension was not required)                                  |
+| is_white_bg      | `bool`           | Decide the background color of the ASCII gif, default as black                             |
+| is_color         | `bool`           | Decide if the ASCII gif should be RGB or grayscale                                         |
+
+Example:
+```rust
+use rasciify::{
+    gif_to_gif::gif_to_gif,
+    character::CharacterType
+};
+
+let _ = image_to_image(
+        "test.gif",
+        200,
+        CharacterType::JpHiragana,
+        None,
+        Some("test_ascii_grayscale_gif"),
+        false,
+        false,
+    );
+```
+Example Output:
+![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_gray_gif.gif)
+Original GIF by [Leroy Patterson](https://giphy.com/leroypatterson) from [giphy.com](https://giphy.com/gifs/leroypatterson-cat-glasses-CjmvTCZf2U3p09Cn0h).
+
+
+&nbsp;
+## GIF to RGB GIF
+To generate ASCII gif in the form of RGB gif from a gif, you can use the `gif_to_gif()` method. This method will save the RGB ASCII gif in the form of gif file.
+
+> [!WARNING] 
+> The dimension of each frame in the gif need to be consistent, else unpredictable behaviour might occur
+
+`gif_to_gif()` takes in 7 parameter in the following sequence.
+| parameter        | type             | description                                                                                |
+|------------------|------------------|--------------------------------------------------------------------------------------------|
+| path             | `&str`           | Path of the gif file                                                                       |    
+| num_cols         | `u32`            | Number of columns of the generated ASCII gif                                               |  
+| character        | `CharacterType`  | The characters to be used for the ASCII gif                                                |
+| output_directory | `Option<&str>`   | Path of the directory where the ASCII gif should be saved                                  |
+| filename         | `Option<&str>`   | Name for the ASCII gif file ( extension was not required)                                  |
+| is_white_bg      | `bool`           | Decide the background color of the ASCII gif, default as black                             |
+| is_color         | `bool`           | Decide if the ASCII gif should be RGB or grayscale                                         |
+
+Example:
+```rust
+use rasciify::{
+    gif_to_gif::gif_to_gif,
+    character::CharacterType
+};
+
+let _ = image_to_image(
+        "test.gif",
+        200,
+        CharacterType::JpHiragana,
+        None,
+        Some("test_ascii_grayscale_gif"),
+        false,
+        true,
+    );
+```
+Example Output:
+![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_rgb_gif.gif)
+Original GIF by [Leroy Patterson](https://giphy.com/leroypatterson) from [giphy.com](https://giphy.com/gifs/leroypatterson-cat-glasses-CjmvTCZf2U3p09Cn0h).

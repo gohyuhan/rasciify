@@ -12,24 +12,27 @@ pub struct FontData<'a> {
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum CharacterType {
-    Simple,     // simple symbol chracters
-    Complex,    // complex symbol characters
-    En,         // English
-    Ru,         // Russian
-    De,         // German
-    Fr,         // French
-    Es,         // Spanish
-    It,         // Italian
-    Pt,         // Portuguese
-    Pl,         // Polish
-    Hi,         // Hindi
-    Ar,         // Arabic
-    Bn,         // Bengali
-    ZhZhuyin,   // Chinese Zhuyin
-    JpHiragana, // Japanese Hiragana
-    JpKatakana, // Japanese Katakana
-    Kr,         // Korean
-    Vi,         // Vietnamese
+    Simple,        // simple symbol chracters
+    Complex,       // complex symbol characters
+    Bar,           // Bar
+    En,            // English
+    Ru,            // Russian
+    De,            // German
+    Fr,            // French
+    Es,            // Spanish
+    It,            // Italian
+    Pt,            // Portuguese
+    Pl,            // Polish
+    Hi,            // Hindi
+    Ar,            // Arabic
+    Bn,            // Bengali
+    ZhZhuyin,      // Chinese Zhuyin
+    ZhSimplified,  // Chinese Simplified
+    ZhTraditional, // Chinese Traditional
+    JpHiragana,    // Japanese Hiragana
+    JpKatakana,    // Japanese Katakana
+    Kr,            // Korean
+    Vi,            // Vietnamese
 }
 
 impl CharacterType {
@@ -43,6 +46,7 @@ impl CharacterType {
                 'Z', 'm', 'w', 'q', 'p', 'd', 'b', 'k', 'h', 'a', 'o', '*', '#', 'M', 'W', '&',
                 '8', '%', 'B', '@', '$',
             ],
+            CharacterType::Bar => vec![' ', '░', '▒', '▓', '█'],
             CharacterType::En => vec![
                 'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h',
                 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p',
@@ -117,6 +121,21 @@ impl CharacterType {
                 'ㄓ', 'ㄔ', 'ㄕ', 'ㄖ', 'ㄗ', 'ㄘ', 'ㄙ', 'ㄧ', 'ㄨ', 'ㄩ', 'ㄚ', 'ㄛ', 'ㄜ', 'ㄝ',
                 'ㄞ', 'ㄟ', 'ㄠ', 'ㄡ', 'ㄢ', 'ㄣ', 'ㄤ', 'ㄥ', 'ㄦ', 'ㄭ',
             ],
+            CharacterType::ZhSimplified => vec![
+                '一', '丁', '丂', '七', '丄', '丅', '丆', '万', '丈', '三', '上', '下', '丌', '不',
+                '汽', '鳙', '黼', '歺', '疒', '疣', '戸', '订', '占', '鬅', '溉', '夂', '匸', '几',
+                '乥', '隣', '䗈', '差', '尶', '膫', '嬉', '二', '十', '鬼', '人', '乏', '讼', '腼',
+                '臓', '廎', '磺', '餍', '痻', '壮', '仫', '匀', '芦', '癫', '鐡', '楹', '宫', '弍',
+                '失', '芩', '卜', '卝', '弋', '袴', '斗', '龤', '虢', '钍', '稣', '蹇', '舍', '品',
+            ],
+            CharacterType::ZhTraditional => vec![
+                '氵', '乛', '丿', '亅', '宀', '乀', '亻', '乊', '丫', '彳', '彳', '艹', '辶', '乚',
+                '刂', '卪', '穴', '亼', '凢', '夕', '㐄', '汴', '止', '卄', '仈', '卟', '氿', '籵',
+                '囗', '汰', '宂', '尕', '亨', '沈', '丱', '汔', '亥', '虍', '禸', '釓', '芔', '彸',
+                '羜', '愨', '照', '虓', '夤', '壹', '繋', '鵓', '鬩', '嶢', '誥', '禊', '鹵', '瞽',
+                '卽', '噫', '嚆', '膩', '鎂', '珞', '僎', '澉', '齁', '曾', '晤', '黑', '葙', '褶',
+                '擼', '驪', '鱺',
+            ],
             CharacterType::JpHiragana => vec![
                 'あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ',
                 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ',
@@ -174,6 +193,18 @@ impl CharacterType {
                     font_data,
                     scale: scale,
                     character: '.',
+                };
+                return font_data_struct;
+            }
+            CharacterType::Bar => {
+                let font_data = include_bytes!("../assets/fonts/dejavu/DejaVuSansMono-Bold.ttf");
+                let font = FontRef::try_from_slice(font_data).unwrap();
+                let font_data_struct: FontData = FontData {
+                    character_list: self.get_character_array(),
+                    font,
+                    font_data,
+                    scale: scale,
+                    character: '░',
                 };
                 return font_data_struct;
             }
@@ -372,6 +403,42 @@ impl CharacterType {
                     font_data,
                     scale: scale,
                     character: 'ㄠ',
+                };
+                return font_data_struct;
+            }
+            CharacterType::ZhSimplified => {
+                scale = PxScale { x: 10.0, y: 20.0 };
+                let font_data: &'static [u8] =
+                    include_bytes!("../assets/fonts/simsun/SimSun-Bold-Modified.ttf");
+                let font = FontRef::try_from_slice(font_data).unwrap();
+                let font_data_struct: FontData = FontData {
+                    character_list: sort_character_brightness(
+                        self.get_character_array(),
+                        font_data,
+                        scale,
+                    ),
+                    font,
+                    font_data,
+                    scale: scale,
+                    character: '失',
+                };
+                return font_data_struct;
+            }
+            CharacterType::ZhTraditional => {
+                scale = PxScale { x: 10.0, y: 20.0 };
+                let font_data: &'static [u8] =
+                    include_bytes!("../assets/fonts/simsun/SimSun-Bold-Modified.ttf");
+                let font = FontRef::try_from_slice(font_data).unwrap();
+                let font_data_struct: FontData = FontData {
+                    character_list: sort_character_brightness(
+                        self.get_character_array(),
+                        font_data,
+                        scale,
+                    ),
+                    font,
+                    font_data,
+                    scale: scale,
+                    character: '鱺',
                 };
                 return font_data_struct;
             }
