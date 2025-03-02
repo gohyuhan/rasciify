@@ -1,10 +1,13 @@
 use std::{
+    collections::HashMap,
     fs::File,
     io::{Cursor, Write},
 };
 
 use gif::{ColorOutput, DecodeOptions, Decoder, Encoder, Frame, Repeat};
 use image::{DynamicImage, GrayImage, ImageBuffer, Luma, Rgba, RgbaImage};
+
+use rayon::prelude::*;
 
 use crate::{
     grayscale_to_ascii_img, rgb_to_rgb_ascii_img,
@@ -95,10 +98,10 @@ pub fn gif_to_gif(
     }
 }
 
-// the function that bundle all the process need to:
+// the function that bundle all the process that need to:
 // 1. decode gif to rgba frames
 // 2. read the frames and turn frames -> ImageRgba -> DynamicImage -> process image to turn to ascii art in DynamicImage
-// 3. i ) based on the list of DynamicImage get color map and flatten the rgba inmage to turn into paletted image
+// 3. i ) based on the list of DynamicImage get color map and flatten the rgba image to turn into paletted image
 //    ii) initialize an encoder, write the frames to a buffer and return the buffer
 pub fn rgb_gif_to_ascii_rgb_gif(
     gif_file: File,
@@ -119,6 +122,11 @@ pub fn rgb_gif_to_ascii_rgb_gif(
     );
 }
 
+// the function that bundle all the process that need to:
+// 1. decode gif to grayscale frames
+// 2. read the frames and turn frames -> GrayImage -> DynamicImage -> process image to turn to ascii art in DynamicImage
+// 3. i ) based on the list of DynamicImage get color map and flatten the grayscale image to turn into paletted image
+//    ii) initialize an encoder, write the frames to a buffer and return the buffer
 pub fn rgb_gif_to_ascii_grayscale_gif(
     gif_file: File,
     options: DecodeOptions,
@@ -239,20 +247,19 @@ pub fn encode_images_to_ascii_rgb_gif(
 ) -> Cursor<Vec<u8>> {
     let mut gif_buffer = Cursor::new(Vec::<u8>::new());
 
-    let (mut flatten_rgb, color_map) = get_img_flatten_rgb_and_color_map(dynamic_image_list);
+    let (flatten_rgb, color_map) = get_img_flatten_rgb_and_color_map(dynamic_image_list);
 
     // start the encoding process
     let mut encoder =
         Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
     let _ = encoder.set_repeat(Repeat::Infinite);
 
-    // 4. Convert images and write frames to GIF
-    for (index, img) in dynamic_image_list.iter().enumerate() {
-        let frame = Frame::from_rgb(
-            img.width() as u16,
-            img.height() as u16,
-            &mut flatten_rgb[index],
-        );
+    // get the rgb gif frame from the flatten rgb, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
+    let rgb_gif_frame = get_rgb_gif_frame(dynamic_image_list, &flatten_rgb);
+
+    // Convert images and write frames to GIF
+    for index in 0..dynamic_image_list.len() {
+        let frame = rgb_gif_frame.get(&index).unwrap();
         encoder.write_frame(&frame).unwrap();
     }
 
@@ -269,24 +276,83 @@ pub fn encode_images_to_ascii_gray_gif(
 ) -> Cursor<Vec<u8>> {
     let mut gif_buffer = Cursor::new(Vec::<u8>::new());
 
-    let (mut flatten_gray, color_map) = get_img_flatten_gray_and_color_map(dynamic_image_list);
+    let (flatten_gray, color_map) = get_img_flatten_gray_and_color_map(dynamic_image_list);
 
     // start the encoding process
     let mut encoder =
         Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
     let _ = encoder.set_repeat(Repeat::Infinite);
 
-    // 4. Convert images and write frames to GIF
-    for (index, img) in dynamic_image_list.iter().enumerate() {
-        let frame = Frame::from_rgb(
-            img.width() as u16,
-            img.height() as u16,
-            &mut flatten_gray[index],
-        );
+    // get the grayScale gif frame from the flatten gray, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
+    let grayscale_gif_frame = get_grayscale_gif_frame(dynamic_image_list, &flatten_gray);
+
+    // Convert images and write frames to GIF
+    for index in 0..dynamic_image_list.len() {
+        let frame = grayscale_gif_frame.get(&index).unwrap();
         encoder.write_frame(&frame).unwrap();
     }
 
     drop(encoder);
 
     return gif_buffer.clone();
+}
+
+// ***************************************************************************************
+//
+//    The following functions utilize rayon parallel processing to speed up the process
+//
+//    Include process:
+//      - process gif frame to ascii art
+//      - converting dynamic image to gif comatible frame (both rgb and grayscale)
+//
+// ***************************************************************************************
+
+
+
+// a function to convert the flatten rgb to gif frame
+// utilizing rayon parallel processing to faster the process
+fn get_rgb_gif_frame(
+    dynamic_image_list: &Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>,
+    flatten_rgb: &Vec<Vec<u8>>,
+) -> HashMap<usize, Frame<'static>> {
+    let total_frames = dynamic_image_list.len();
+    let mut gif_frame_hashmap = HashMap::with_capacity(total_frames); // Pre-allocate HashMap
+
+    let array:Vec<(usize, Frame<'static>)> = dynamic_image_list.par_iter().enumerate().map(|(index, img)|{
+        let mut pixel = flatten_rgb[index].clone(); // Cloning to own the data
+        let width = img.width() as u16;
+        let height = img.height() as u16;
+        let frame = Frame::from_rgb(width, height, &mut pixel);
+        (index, frame)
+    }).collect();
+
+    for (index, frame) in array{
+        gif_frame_hashmap.insert(index, frame);
+    }
+
+    return gif_frame_hashmap;
+}
+
+// a function to convert the flatten gray to gif frame
+// utilizing rayon parallel processing to faster the process
+fn get_grayscale_gif_frame(
+    dynamic_image_list: &Vec<ImageBuffer<Luma<u8>, Vec<u8>>>,
+    flatten_gray: &Vec<Vec<u8>>,
+) -> HashMap<usize, Frame<'static>> {
+    let total_frames = dynamic_image_list.len();
+    let mut gif_frame_hashmap = HashMap::with_capacity(total_frames); // Pre-allocate HashMap
+
+    let array:Vec<(usize, Frame<'static>)> = dynamic_image_list.par_iter().enumerate().map(|(index, img)|{
+        let mut pixel = flatten_gray[index].clone(); // Cloning to own the data
+        let width = img.width() as u16;
+        let height = img.height() as u16;
+        let frame = Frame::from_rgb(width, height, &mut pixel);
+        (index, frame)
+    }).collect();
+
+    for (index, frame) in array{
+        gif_frame_hashmap.insert(index, frame);
+    }
+
+    return gif_frame_hashmap;
 }

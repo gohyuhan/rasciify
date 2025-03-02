@@ -786,6 +786,7 @@ dependencies = [
  "gif",
  "image",
  "imageproc",
+ "rayon",
  "rusttype",
 ]
 
