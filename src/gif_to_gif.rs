@@ -307,8 +307,6 @@ pub fn encode_images_to_ascii_gray_gif(
 //
 // ***************************************************************************************
 
-
-
 // a function to convert the flatten rgb to gif frame
 // utilizing rayon parallel processing to faster the process
 fn get_rgb_gif_frame(
@@ -318,15 +316,19 @@ fn get_rgb_gif_frame(
     let total_frames = dynamic_image_list.len();
     let mut gif_frame_hashmap = HashMap::with_capacity(total_frames); // Pre-allocate HashMap
 
-    let array:Vec<(usize, Frame<'static>)> = dynamic_image_list.par_iter().enumerate().map(|(index, img)|{
-        let mut pixel = flatten_rgb[index].clone(); // Cloning to own the data
-        let width = img.width() as u16;
-        let height = img.height() as u16;
-        let frame = Frame::from_rgb(width, height, &mut pixel);
-        (index, frame)
-    }).collect();
+    let array: Vec<(usize, Frame<'static>)> = dynamic_image_list
+        .par_iter()
+        .enumerate()
+        .map(|(index, img)| {
+            let mut pixel = flatten_rgb[index].clone(); // Cloning to own the data
+            let width = img.width() as u16;
+            let height = img.height() as u16;
+            let frame = Frame::from_rgb(width, height, &mut pixel);
+            (index, frame)
+        })
+        .collect();
 
-    for (index, frame) in array{
+    for (index, frame) in array {
         gif_frame_hashmap.insert(index, frame);
     }
 
@@ -342,15 +344,19 @@ fn get_grayscale_gif_frame(
     let total_frames = dynamic_image_list.len();
     let mut gif_frame_hashmap = HashMap::with_capacity(total_frames); // Pre-allocate HashMap
 
-    let array:Vec<(usize, Frame<'static>)> = dynamic_image_list.par_iter().enumerate().map(|(index, img)|{
-        let mut pixel = flatten_gray[index].clone(); // Cloning to own the data
-        let width = img.width() as u16;
-        let height = img.height() as u16;
-        let frame = Frame::from_rgb(width, height, &mut pixel);
-        (index, frame)
-    }).collect();
+    let array: Vec<(usize, Frame<'static>)> = dynamic_image_list
+        .par_iter()
+        .enumerate()
+        .map(|(index, img)| {
+            let mut pixel = flatten_gray[index].clone(); // Cloning to own the data
+            let width = img.width() as u16;
+            let height = img.height() as u16;
+            let frame = Frame::from_rgb(width, height, &mut pixel);
+            (index, frame)
+        })
+        .collect();
 
-    for (index, frame) in array{
+    for (index, frame) in array {
         gif_frame_hashmap.insert(index, frame);
     }
 

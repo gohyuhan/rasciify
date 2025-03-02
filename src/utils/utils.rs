@@ -6,8 +6,6 @@ use imageproc::drawing::draw_text_mut;
 
 use super::font::get_character_dimensions;
 
-use rayon::prelude::*;
-
 pub fn check_and_create_directory(output_directory: Option<&str>) -> Result<(), String> {
     if output_directory.is_some() {
         let path = Path::new(output_directory.unwrap());
@@ -181,16 +179,17 @@ pub fn get_img_flatten_rgb_and_color_map(
 pub fn get_img_flatten_gray_and_color_map(
     img_list: &Vec<ImageBuffer<Luma<u8>, Vec<u8>>>,
 ) -> (Vec<Vec<u8>>, Vec<u8>) {
+    let mut flatten_gray: Vec<Vec<u8>> = Vec::new();
     let mut color_map: Vec<u8> = Vec::new();
 
     // Step 1: Collect gray colors from all images
-    let flatten_gray: Vec<Vec<u8>> = img_list.par_iter().enumerate().map(|(_, img)|{
+    for img in img_list {
         let mut flat_gray_list: Vec<u8> = Vec::new();
         for pixel in img.pixels() {
             flat_gray_list.extend_from_slice(&[pixel[0], pixel[0], pixel[0]]);
         }
-        flat_gray_list
-    }).collect();
+        flatten_gray.push(flat_gray_list);
+    }
 
     // Step 2: generate a color map of grayscale
     for i in 0..=255 {
