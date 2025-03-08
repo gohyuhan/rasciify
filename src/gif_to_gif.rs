@@ -134,10 +134,15 @@ pub fn rgb_gif_to_ascii_grayscale_gif(
     character_type: CharacterType,
     is_white_bg: bool,
 ) -> Cursor<Vec<u8>> {
+    use std::time::Instant;
+    let start = Instant::now();
     let decoder = decode_gif(gif_file, options, false);
+    println!("Decoding gif took: {}s", start.elapsed().as_secs());
 
+    let start = Instant::now();
     let luma_image_buffer_list =
         process_frames_to_ascii_grayscale_img(decoder, num_cols, character_type, is_white_bg);
+    println!("Process Ascii took: {}s", start.elapsed().as_secs());
 
     return encode_images_to_ascii_gray_gif(&luma_image_buffer_list);
 }
@@ -155,6 +160,100 @@ pub fn decode_gif(gif_file: File, mut options: DecodeOptions, is_color: bool) ->
 
     return decoder;
 }
+
+// encode the rgba ascii art images back to rgb frames and return the buffer
+pub fn encode_images_to_ascii_rgb_gif(
+    rgba_image_buffer_list: &Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>,
+) -> Cursor<Vec<u8>> {
+    let mut gif_buffer = Cursor::new(Vec::<u8>::new());
+    let mut encoder_width: u16 = 0;
+    let mut encoder_height: u16 = 0;
+
+    use std::time::Instant;
+    let start = Instant::now();
+    let (flatten_rgb, color_map) = get_img_flatten_rgb_and_color_map(rgba_image_buffer_list);
+    rgba_image_buffer_list.iter().for_each(|frame| {
+        encoder_height = encoder_height.max(frame.height() as u16);
+        encoder_width = encoder_width.max(frame.width() as u16);
+    });
+    println!(
+        "get_flatten_frame_color_map took: {:?}",
+        start.elapsed().as_secs()
+    );
+
+    let start = Instant::now();
+    // start the encoding process
+    let mut encoder =
+        Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
+    let _ = encoder.set_repeat(Repeat::Infinite);
+
+    // get the rgb gif frame from the flatten rgb, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
+    let rgb_gif_frame = get_rgb_gif_frame(rgba_image_buffer_list, &flatten_rgb);
+    println!("get_rgb_gif_frame took: {:?}", start.elapsed().as_secs());
+
+    let start = Instant::now();
+    // Convert images and write frames to GIF
+    rgb_gif_frame.iter().for_each(|frame| {
+        encoder.write_frame(frame).unwrap();
+    });
+    println!("encoding took: {:?}", start.elapsed().as_secs());
+
+    drop(encoder);
+
+    return gif_buffer.clone();
+}
+
+// encode the gray ascii art images back to gray frames and return the buffer
+pub fn encode_images_to_ascii_gray_gif(
+    luma_image_buffer_list: &Vec<ImageBuffer<Luma<u8>, Vec<u8>>>,
+) -> Cursor<Vec<u8>> {
+    let mut gif_buffer = Cursor::new(Vec::<u8>::new());
+    let mut encoder_width: u16 = 0;
+    let mut encoder_height: u16 = 0;
+
+    use std::time::Instant;
+    let start = Instant::now();
+    let (flatten_gray, color_map) = get_img_flatten_gray_and_color_map(luma_image_buffer_list);
+    luma_image_buffer_list.iter().for_each(|frame| {
+        encoder_height = encoder_height.max(frame.height() as u16);
+        encoder_width = encoder_width.max(frame.width() as u16);
+    });
+    println!(
+        "get_flatten_frame_color_map took: {:?}",
+        start.elapsed().as_secs()
+    );
+
+    let start = Instant::now();
+    // start the encoding process
+    let mut encoder =
+        Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
+    let _ = encoder.set_repeat(Repeat::Infinite);
+
+    // get the grayScale gif frame from the flatten gray, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
+    let grayscale_gif_frame = get_grayscale_gif_frame(luma_image_buffer_list, &flatten_gray);
+    println!("get_rgb_gif_frame took: {:?}", start.elapsed().as_secs());
+
+    let start = Instant::now();
+    // Convert images and write frames to GIF
+    grayscale_gif_frame.iter().for_each(|frame| {
+        encoder.write_frame(&frame).unwrap();
+    });
+    println!("encoding took: {:?}", start.elapsed().as_secs());
+
+    drop(encoder);
+
+    return gif_buffer.clone();
+}
+
+// ***************************************************************************************
+//
+//    The following functions utilize rayon parallel processing to speed up the process
+//
+//    Include process:
+//      - process gif frame to ascii art
+//      - converting dynamic image to gif compatible frame (both rgb and grayscale) [in future when resizing is supported]
+//
+// ***************************************************************************************
 
 // process the frames to list of rgba ascii art
 pub fn process_frames_to_ascii_rgba_img(
@@ -237,88 +336,6 @@ pub fn process_frames_to_ascii_grayscale_img(
     return luma8_image_buffer_list;
 }
 
-// encode the rgba ascii art images back to rgb frames and return the buffer
-pub fn encode_images_to_ascii_rgb_gif(
-    rgba_image_buffer_list: &Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>,
-) -> Cursor<Vec<u8>> {
-    let mut gif_buffer = Cursor::new(Vec::<u8>::new());
-    let mut encoder_width: u16 = 0;
-    let mut encoder_height: u16 = 0;
-
-    use std::time::Instant;
-    let start = Instant::now();
-    let (flatten_rgb, color_map) = get_img_flatten_rgb_and_color_map(rgba_image_buffer_list);
-    rgba_image_buffer_list.iter().for_each(|frame| {
-        encoder_height = encoder_height.max(frame.height() as u16);
-        encoder_width = encoder_width.max(frame.width() as u16);
-    });
-    println!("get_flatten_frame_color_map took: {:?}", start.elapsed());
-
-    // start the encoding process
-    let mut encoder =
-        Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
-    let _ = encoder.set_repeat(Repeat::Infinite);
-
-    let start = Instant::now();
-
-    // get the rgb gif frame from the flatten rgb, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
-    let rgb_gif_frame = get_rgb_gif_frame(rgba_image_buffer_list, &flatten_rgb);
-    println!("get_rgb_gif_frame took: {:?}", start.elapsed());
-
-    let start = Instant::now();
-    // Convert images and write frames to GIF
-    for frame in rgb_gif_frame {
-        encoder.write_frame(&frame).unwrap();
-    }
-    println!("encoding took: {:?}", start.elapsed());
-
-    drop(encoder);
-
-    return gif_buffer.clone();
-}
-
-// encode the gray ascii art images back to gray frames and return the buffer
-pub fn encode_images_to_ascii_gray_gif(
-    luma_image_buffer_list: &Vec<ImageBuffer<Luma<u8>, Vec<u8>>>,
-) -> Cursor<Vec<u8>> {
-    let mut gif_buffer = Cursor::new(Vec::<u8>::new());
-    let mut encoder_width: u16 = 0;
-    let mut encoder_height: u16 = 0;
-
-    let (flatten_gray, color_map) = get_img_flatten_gray_and_color_map(luma_image_buffer_list);
-    luma_image_buffer_list.iter().for_each(|frame| {
-        encoder_height = encoder_height.max(frame.height() as u16);
-        encoder_width = encoder_width.max(frame.width() as u16);
-    });
-
-    // start the encoding process
-    let mut encoder =
-        Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
-    let _ = encoder.set_repeat(Repeat::Infinite);
-
-    // get the grayScale gif frame from the flatten gray, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
-    let grayscale_gif_frame = get_grayscale_gif_frame(luma_image_buffer_list, &flatten_gray);
-
-    // Convert images and write frames to GIF
-    for frame in grayscale_gif_frame {
-        encoder.write_frame(&frame).unwrap();
-    }
-
-    drop(encoder);
-
-    return gif_buffer.clone();
-}
-
-// ***************************************************************************************
-//
-//    The following functions utilize rayon parallel processing to speed up the process
-//
-//    Include process:
-//      - process gif frame to ascii art
-//      - converting dynamic image to gif compatible frame (both rgb and grayscale) [in future when resizing is supported]
-//
-// ***************************************************************************************
-
 // a function to convert the flatten rgb to gif frame
 // utilizing rayon parallel processing to faster the process
 fn get_rgb_gif_frame(
@@ -329,10 +346,10 @@ fn get_rgb_gif_frame(
         .par_iter()
         .enumerate()
         .map(|(index, img)| {
-            let mut pixel = flatten_rgb[index].clone(); // Cloning to own the data
+            let pixel = flatten_rgb[index].clone(); // Cloning to own the data
             let width = img.width() as u16;
             let height = img.height() as u16;
-            let frame = Frame::from_rgb(width, height, &mut pixel);
+            let frame = Frame::from_rgb_speed(width, height, &pixel, 10);
             frame
         })
         .collect();
@@ -353,6 +370,8 @@ fn get_grayscale_gif_frame(
             let mut pixel = flatten_gray[index].clone(); // Cloning to own the data
             let width = img.width() as u16;
             let height = img.height() as u16;
+            // it will be quite fast for rgb that was originally grayscale
+            // so we will not use Frame::from_rgb_speed like the rgb one does
             let frame = Frame::from_rgb(width, height, &mut pixel);
             frame
         })
