@@ -94,7 +94,13 @@ pub fn grayscale_to_ascii_img(
     let img = img.grayscale();
     let (width, height) = img.dimensions();
     let character_data: FontData = character_type.get_character_data();
-    let mut num_cols = num_cols;
+    // if the user provide a number of columns that is greater than the width of the image,
+    // we default to the 1/4 width of the image to prevent panic or error
+    let mut num_cols = if num_cols > width {
+        width / 4
+    } else {
+        num_cols
+    };
     // width per cell
     let mut cell_width = width / num_cols;
     // height per cell
@@ -161,7 +167,13 @@ pub fn rgb_to_rgb_ascii_img(
 ) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     let (width, height) = img.dimensions();
     let character_data: FontData = character_type.get_character_data();
-    let mut num_cols = num_cols;
+    // if the user provide a number of columns that is greater than the width of the image,
+    // we default to the 1/4 width of the image to prevent panic or error
+    let mut num_cols = if num_cols > width {
+        width / 4
+    } else {
+        num_cols
+    };
     // width per cell
     let mut cell_width = width / num_cols;
     // height per cell
