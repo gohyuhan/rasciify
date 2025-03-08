@@ -28,6 +28,11 @@ cargo add rasciify
 To check out how to use ``rasciify``, check the [docs](docs/usage.md) here
 
 ## Change Logs
+### v0.2.1
+Released: 2025-03-08  
+Optimized Gif related Processing.  
+Add handling if user input a number of columns that is larger than the image width. We will default that back to 1/4 of the image width.  
+
 ### v0.2.0
 Released: 2025-03-02  
 Add new supported character set.  
