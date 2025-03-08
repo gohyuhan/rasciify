@@ -33,7 +33,7 @@ let _ = image_to_text(
 );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/text-example.png)
+![Example Output](/examples/text-example.png)
 
 
 ### Result as String
@@ -90,7 +90,7 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_ascii_grayscale_img.jpg)
+![Example Output](/examples/test_ascii_grayscale_img.jpg)
 
 
 ### Result as ImageBuffer<Luma<u8>, Vec<u8>>
@@ -142,7 +142,7 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_ascii_rgb_img.jpeg)
+![Example Output](/examples/test_ascii_rgb_img.jpeg)
 
 
 ### Result as ImageBuffer<Rgba<u8>, Vec<u8>>
@@ -208,7 +208,7 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_gray_gif.gif)
+![Example Output](/examples/test_rgb_gif.gif)
 Original GIF by [Leroy Patterson](https://giphy.com/leroypatterson) from [giphy.com](https://giphy.com/gifs/leroypatterson-cat-glasses-CjmvTCZf2U3p09Cn0h).
 
 
@@ -248,5 +248,5 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](https://pub-175bba18844543bca17c4d8b5b49b04c.r2.dev/test_rgb_gif.gif)
+![Example Output](/examples/test_gray_gif.gif)
 Original GIF by [Leroy Patterson](https://giphy.com/leroypatterson) from [giphy.com](https://giphy.com/gifs/leroypatterson-cat-glasses-CjmvTCZf2U3p09Cn0h).
