@@ -109,15 +109,10 @@ pub fn rgb_gif_to_ascii_rgb_gif(
     character_type: CharacterType,
     is_white_bg: bool,
 ) -> Cursor<Vec<u8>> {
-    use std::time::Instant;
-    let start = Instant::now();
     let decoder = decode_gif(gif_file, options, true);
-    println!("Decoding gif took: {}s", start.elapsed().as_secs());
 
-    let start = Instant::now();
     let rgba_image_buffer_list =
         process_frames_to_ascii_rgba_img(decoder, num_cols, character_type, is_white_bg);
-    println!("Process Ascii took: {}s", start.elapsed().as_secs());
 
     return encode_images_to_ascii_rgb_gif(&rgba_image_buffer_list);
 }
@@ -134,15 +129,10 @@ pub fn rgb_gif_to_ascii_grayscale_gif(
     character_type: CharacterType,
     is_white_bg: bool,
 ) -> Cursor<Vec<u8>> {
-    use std::time::Instant;
-    let start = Instant::now();
     let decoder = decode_gif(gif_file, options, false);
-    println!("Decoding gif took: {}s", start.elapsed().as_secs());
 
-    let start = Instant::now();
     let luma_image_buffer_list =
         process_frames_to_ascii_grayscale_img(decoder, num_cols, character_type, is_white_bg);
-    println!("Process Ascii took: {}s", start.elapsed().as_secs());
 
     return encode_images_to_ascii_gray_gif(&luma_image_buffer_list);
 }
@@ -169,19 +159,12 @@ pub fn encode_images_to_ascii_rgb_gif(
     let mut encoder_width: u16 = 0;
     let mut encoder_height: u16 = 0;
 
-    use std::time::Instant;
-    let start = Instant::now();
     let (flatten_rgb, color_map) = get_img_flatten_rgb_and_color_map(rgba_image_buffer_list);
     rgba_image_buffer_list.iter().for_each(|frame| {
         encoder_height = encoder_height.max(frame.height() as u16);
         encoder_width = encoder_width.max(frame.width() as u16);
     });
-    println!(
-        "get_flatten_frame_color_map took: {:?}",
-        start.elapsed().as_secs()
-    );
 
-    let start = Instant::now();
     // start the encoding process
     let mut encoder =
         Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
@@ -189,14 +172,11 @@ pub fn encode_images_to_ascii_rgb_gif(
 
     // get the rgb gif frame from the flatten rgb, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
     let rgb_gif_frame = get_rgb_gif_frame(rgba_image_buffer_list, &flatten_rgb);
-    println!("get_rgb_gif_frame took: {:?}", start.elapsed().as_secs());
 
-    let start = Instant::now();
     // Convert images and write frames to GIF
     rgb_gif_frame.iter().for_each(|frame| {
         encoder.write_frame(frame).unwrap();
     });
-    println!("encoding took: {:?}", start.elapsed().as_secs());
 
     drop(encoder);
 
@@ -211,19 +191,12 @@ pub fn encode_images_to_ascii_gray_gif(
     let mut encoder_width: u16 = 0;
     let mut encoder_height: u16 = 0;
 
-    use std::time::Instant;
-    let start = Instant::now();
     let (flatten_gray, color_map) = get_img_flatten_gray_and_color_map(luma_image_buffer_list);
     luma_image_buffer_list.iter().for_each(|frame| {
         encoder_height = encoder_height.max(frame.height() as u16);
         encoder_width = encoder_width.max(frame.width() as u16);
     });
-    println!(
-        "get_flatten_frame_color_map took: {:?}",
-        start.elapsed().as_secs()
-    );
 
-    let start = Instant::now();
     // start the encoding process
     let mut encoder =
         Encoder::new(&mut gif_buffer, encoder_width, encoder_height, &color_map).unwrap();
@@ -231,14 +204,11 @@ pub fn encode_images_to_ascii_gray_gif(
 
     // get the grayScale gif frame from the flatten gray, dynamic image is neede to get the width and height info as the flattern rgb is just a 1d array
     let grayscale_gif_frame = get_grayscale_gif_frame(luma_image_buffer_list, &flatten_gray);
-    println!("get_rgb_gif_frame took: {:?}", start.elapsed().as_secs());
 
-    let start = Instant::now();
     // Convert images and write frames to GIF
     grayscale_gif_frame.iter().for_each(|frame| {
         encoder.write_frame(&frame).unwrap();
     });
-    println!("encoding took: {:?}", start.elapsed().as_secs());
 
     drop(encoder);
 
