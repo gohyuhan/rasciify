@@ -208,7 +208,7 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](/examples/test_rgb_gif.gif)
+![Example Output](/examples/test_gray_gif.gif)
 Original GIF by [Leroy Patterson](https://giphy.com/leroypatterson) from [giphy.com](https://giphy.com/gifs/leroypatterson-cat-glasses-CjmvTCZf2U3p09Cn0h).
 
 
@@ -248,5 +248,5 @@ let _ = image_to_image(
     );
 ```
 Example Output:
-![Example Output](/examples/test_gray_gif.gif)
+![Example Output](/examples/test_rgb_gif.gif)
 Original GIF by [Leroy Patterson](https://giphy.com/leroypatterson) from [giphy.com](https://giphy.com/gifs/leroypatterson-cat-glasses-CjmvTCZf2U3p09Cn0h).
