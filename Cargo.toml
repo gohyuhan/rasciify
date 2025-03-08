@@ -4,7 +4,7 @@ version = "0.2.1"
 edition = "2021"
 authors = ["Goh Yu Han <gohyuhan123456@gmail.com>"]
 
-description = "For generating ASCII art ( RGB/grayscale image or text based ) based on image provided."
+description = "For generating ASCII art ( RGB/grayscale image, text based or GIF ) based on image or GIF provided."
 license = "MIT"
 repository = "https://github.com/gohyuhan/rasciify"
 documentation = "https://github.com/gohyuhan/rasciify/blob/main/docs/usage.md"
