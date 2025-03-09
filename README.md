@@ -28,6 +28,20 @@ cargo add rasciify
 To check out how to use ``rasciify``, check the [docs](docs/usage.md) here
 
 ## Change Logs
+### v0.2.2
+Released: 2025-03-09  
+- No additional features added.  
+- Some Refactoring to reduce the params need for function call.  
+- Breaking API changes (if you are updating to v0.2.2 from previous release):  
+    - `image_to_image`
+    - `grayscale_to_ascii_img`
+    - `rgb_to_rgb_ascii_img`
+    - `gif_to_gif`
+    - `rgb_gif_to_ascii_rgb_gif`
+    - `rgb_gif_to_ascii_grayscale_gif`
+    - `process_frames_to_ascii_rgba_img`
+    - `process_frames_to_ascii_grayscale_img`
+
 ### v0.2.1
 Released: 2025-03-08  
 - Optimized Gif related Processing.  

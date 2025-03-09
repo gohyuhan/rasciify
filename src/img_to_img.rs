@@ -10,24 +10,23 @@ use crate::{
             get_character_line_list_based_on_luma,
         },
     },
+    SettingOption,
 };
 
 // Converts an image to ASCII art.
 pub fn image_to_image(
     path: &str,
-    num_cols: u32,
     character_type: CharacterType,
     output_directory: Option<&str>,
     filename: Option<&str>,
-    is_white_bg: bool,
-    is_color: bool,
+    setting_option: SettingOption,
 ) -> Result<String, String> {
     let img = image::open(path).expect("Failed to open image");
 
     // process to generate ascii rgb image or ascii grayscale image
-    if is_color {
+    if setting_option.is_color {
         // todo: process image to rgb ascii image
-        let rgba_ascii_img = rgb_to_rgb_ascii_img(&img, num_cols, character_type, is_white_bg);
+        let rgba_ascii_img = rgb_to_rgb_ascii_img(&img, character_type, setting_option);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
@@ -55,7 +54,7 @@ pub fn image_to_image(
             Err(e) => Err(e),
         }
     } else {
-        let gray_ascii_img = grayscale_to_ascii_img(&img, num_cols, character_type, is_white_bg);
+        let gray_ascii_img = grayscale_to_ascii_img(&img, character_type, setting_option);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
@@ -87,26 +86,25 @@ pub fn image_to_image(
 
 pub fn grayscale_to_ascii_img(
     img: &DynamicImage,
-    num_cols: u32,
     character_type: CharacterType,
-    is_white_bg: bool,
+    setting_option: SettingOption,
 ) -> ImageBuffer<Luma<u8>, Vec<u8>> {
     let img = img.grayscale();
     let (width, height) = img.dimensions();
     let character_data: FontData = character_type.get_character_data();
     // if the user provide a number of columns that is greater than the width of the image,
     // we default to the 1/4 width of the image to prevent panic or error
-    let mut num_cols = if num_cols > width {
+    let mut num_cols = if setting_option.num_cols > width {
         width / 4
     } else {
-        num_cols
+        setting_option.num_cols
     };
     // width per cell
     let mut cell_width = width / num_cols;
     // height per cell
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
-    let background_code = if is_white_bg { 255 } else { 0 };
+    let background_code = if setting_option.is_white_bg { 255 } else { 0 };
 
     if num_cols > width || num_rows > height {
         // Too many columns or rows. Use default setting
@@ -161,25 +159,24 @@ pub fn grayscale_to_ascii_img(
 
 pub fn rgb_to_rgb_ascii_img(
     img: &DynamicImage,
-    num_cols: u32,
     character_type: CharacterType,
-    is_white_bg: bool,
+    setting_option: SettingOption,
 ) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     let (width, height) = img.dimensions();
     let character_data: FontData = character_type.get_character_data();
     // if the user provide a number of columns that is greater than the width of the image,
     // we default to the 1/4 width of the image to prevent panic or error
-    let mut num_cols = if num_cols > width {
+    let mut num_cols = if setting_option.num_cols > width {
         width / 4
     } else {
-        num_cols
+        setting_option.num_cols
     };
     // width per cell
     let mut cell_width = width / num_cols;
     // height per cell
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;
-    let background_code = if is_white_bg { 255 } else { 0 };
+    let background_code = if setting_option.is_white_bg { 255 } else { 0 };
 
     if num_cols > width || num_rows > height {
         // Too many columns or rows. Use default setting

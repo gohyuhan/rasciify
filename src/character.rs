@@ -179,7 +179,7 @@ impl CharacterType {
                     character_list: self.get_character_array(),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: '.',
                 };
                 return font_data_struct;
@@ -191,7 +191,7 @@ impl CharacterType {
                     character_list: self.get_character_array(),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: '.',
                 };
                 return font_data_struct;
@@ -203,7 +203,7 @@ impl CharacterType {
                     character_list: self.get_character_array(),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: '░',
                 };
                 return font_data_struct;
@@ -219,7 +219,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'A',
                 };
                 return font_data_struct;
@@ -235,7 +235,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'Ш',
                 };
                 return font_data_struct;
@@ -251,7 +251,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'Ü',
                 };
                 return font_data_struct;
@@ -267,7 +267,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'Ë',
                 };
                 return font_data_struct;
@@ -283,7 +283,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'Ñ',
                 };
                 return font_data_struct;
@@ -299,7 +299,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'È',
                 };
                 return font_data_struct;
@@ -315,7 +315,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'Ó',
                 };
                 return font_data_struct;
@@ -331,7 +331,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'ł',
                 };
                 return font_data_struct;
@@ -348,7 +348,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'अ',
                 };
                 return font_data_struct;
@@ -366,7 +366,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'ظ',
                 };
                 return font_data_struct;
@@ -383,7 +383,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'আ',
                 };
                 return font_data_struct;
@@ -401,7 +401,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'ㄠ',
                 };
                 return font_data_struct;
@@ -419,7 +419,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: '失',
                 };
                 return font_data_struct;
@@ -437,7 +437,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: '鱺',
                 };
                 return font_data_struct;
@@ -455,7 +455,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'あ',
                 };
                 return font_data_struct;
@@ -473,7 +473,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'ア',
                 };
                 return font_data_struct;
@@ -491,7 +491,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'ㅠ',
                 };
                 return font_data_struct;
@@ -509,7 +509,7 @@ impl CharacterType {
                     ),
                     font,
                     font_data,
-                    scale: scale,
+                    scale,
                     character: 'Ỵ',
                 };
                 return font_data_struct;

@@ -12,3 +12,6 @@ pub use gif_to_gif::*;
 
 pub mod utils;
 pub use utils::*;
+
+pub mod types;
+pub use types::*;
