@@ -14,25 +14,23 @@ use crate::{
         check_and_create_directory, get_img_flatten_gray_and_color_map,
         get_img_flatten_rgb_and_color_map,
     },
-    CharacterType,
+    CharacterType, SettingOption,
 };
 
 pub fn gif_to_gif(
     path: &str,
-    num_cols: u32,
     character_type: CharacterType,
     output_directory: Option<&str>,
     filename: Option<&str>,
-    is_white_bg: bool,
-    is_color: bool,
+    setting_option: SettingOption,
 ) -> Result<String, String> {
     let file = File::open(path).expect("Failed to open GIF");
 
     // init the decode option for gif
     let options = DecodeOptions::new();
-    if is_color {
+    if setting_option.is_color {
         let gif_buffer: Cursor<Vec<u8>> =
-            rgb_gif_to_ascii_rgb_gif(file, options, num_cols, character_type, is_white_bg);
+            rgb_gif_to_ascii_rgb_gif(file, options, character_type, setting_option);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
@@ -64,7 +62,7 @@ pub fn gif_to_gif(
         }
     } else {
         let gif_buffer: Cursor<Vec<u8>> =
-            rgb_gif_to_ascii_grayscale_gif(file, options, num_cols, character_type, is_white_bg);
+            rgb_gif_to_ascii_grayscale_gif(file, options, character_type, setting_option);
         match check_and_create_directory(output_directory) {
             Ok(_) => {
                 if let Some(filename) = filename {
@@ -105,14 +103,13 @@ pub fn gif_to_gif(
 pub fn rgb_gif_to_ascii_rgb_gif(
     gif_file: File,
     options: DecodeOptions,
-    num_cols: u32,
     character_type: CharacterType,
-    is_white_bg: bool,
+    setting_option: SettingOption,
 ) -> Cursor<Vec<u8>> {
     let decoder = decode_gif(gif_file, options, true);
 
     let rgba_image_buffer_list =
-        process_frames_to_ascii_rgba_img(decoder, num_cols, character_type, is_white_bg);
+        process_frames_to_ascii_rgba_img(decoder, character_type, setting_option);
 
     return encode_images_to_ascii_rgb_gif(&rgba_image_buffer_list);
 }
@@ -125,14 +122,13 @@ pub fn rgb_gif_to_ascii_rgb_gif(
 pub fn rgb_gif_to_ascii_grayscale_gif(
     gif_file: File,
     options: DecodeOptions,
-    num_cols: u32,
     character_type: CharacterType,
-    is_white_bg: bool,
+    setting_option: SettingOption,
 ) -> Cursor<Vec<u8>> {
     let decoder = decode_gif(gif_file, options, false);
 
     let luma_image_buffer_list =
-        process_frames_to_ascii_grayscale_img(decoder, num_cols, character_type, is_white_bg);
+        process_frames_to_ascii_grayscale_img(decoder, character_type, setting_option);
 
     return encode_images_to_ascii_gray_gif(&luma_image_buffer_list);
 }
@@ -228,9 +224,8 @@ pub fn encode_images_to_ascii_gray_gif(
 // process the frames to list of rgba ascii art
 pub fn process_frames_to_ascii_rgba_img(
     mut decoder: Decoder<File>,
-    num_cols: u32,
     character_type: CharacterType,
-    is_white_bg: bool,
+    setting_option: SettingOption,
 ) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>> {
     let mut all_frames = vec![];
 
@@ -256,8 +251,7 @@ pub fn process_frames_to_ascii_rgba_img(
             // convert to rgba dynamic image ffrom the buffer
             let rgb_img = DynamicImage::ImageRgba8(rgb_img_buffer);
 
-            let rgb_ascii_img =
-                rgb_to_rgb_ascii_img(&rgb_img, num_cols, character_type, is_white_bg);
+            let rgb_ascii_img = rgb_to_rgb_ascii_img(&rgb_img, character_type, setting_option);
 
             rgb_ascii_img
         })
@@ -269,9 +263,8 @@ pub fn process_frames_to_ascii_rgba_img(
 // process the frames to list of gray ascii art
 pub fn process_frames_to_ascii_grayscale_img(
     mut decoder: Decoder<File>,
-    num_cols: u32,
     character_type: CharacterType,
-    is_white_bg: bool,
+    setting_option: SettingOption,
 ) -> Vec<ImageBuffer<Luma<u8>, Vec<u8>>> {
     let mut all_frames = vec![];
 
@@ -297,8 +290,7 @@ pub fn process_frames_to_ascii_grayscale_img(
             // convert to luma8 dynamic image from the buffer
             let luma_img = DynamicImage::ImageLuma8(luma_img_buffer);
 
-            let luma_ascii_img =
-                grayscale_to_ascii_img(&luma_img, num_cols, character_type, is_white_bg);
+            let luma_ascii_img = grayscale_to_ascii_img(&luma_img, character_type, setting_option);
 
             luma_ascii_img
         })

@@ -37,7 +37,7 @@ pub fn grayscale_to_ascii(img: &DynamicImage, num_cols: u32, complex: bool) -> S
     let img = img.grayscale();
     let (width, height) = img.dimensions();
     let mut ascii = String::new();
-    let mut num_cols = num_cols;
+    let mut num_cols = if num_cols > width { width } else { num_cols };
     let mut cell_width = width / num_cols;
     let mut cell_height = 2 * cell_width;
     let mut num_rows = height / cell_height;

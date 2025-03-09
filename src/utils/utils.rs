@@ -94,7 +94,7 @@ pub fn sort_character_brightness(
 ) -> Vec<char> {
     let num_char = character_list.len();
     let mut character_brightness_list: Vec<CharacterBrightness> = vec![];
-    for character in character_list.clone() {
+    for character in character_list {
         let font = FontRef::try_from_slice(font_data).unwrap();
 
         let (width, height) = get_character_dimensions(scale, character, font_data);
